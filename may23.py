@@ -2,10 +2,12 @@ import numpy as np
 import scipy
 from matplotlib import pyplot as plt
 import obspy
+import os
+import glob
 
 
 def load_sample_stream():
-    return obspy.read('c:/Users/lworthington/Downloads/8J.009.001.991.sgy')
+    return obspy.read('c:/Users/lworthington/Downloads/8J.009.001.991.sgy', unpack_trace_headers=True)
 
 def compare_arrs(*arrs):
     fig, axs = plt.subplots(len(arrs), 1, sharex=True)
@@ -80,3 +82,17 @@ def plot_stream(st):
         plt.plot(x, y, 'k', linewidth=0.1)
     plt.ylim(0, 8)
     plt.show()
+
+def load_shot(shotid):
+    shot_dir = os.path.join('shots', shotid)
+    stream = obspy.core.stream.Stream()
+    for path in glob.glob(os.path.join(shot_dir, '*.sgy')):
+        stream += obspy.read(path, unpack_trace_headers=True)
+    return stream
+
+# Current status: The sample data Lindsay sent me doesn't match up
+# with the data I downloaded. Not only are the distances totally
+# different the data itself doesn't seem to match either. I'm going to
+# stop working on this for today because I don't understand what the
+# source and group coordinates are or how the offset distance is
+# calculated and how to correct it.
