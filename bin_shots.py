@@ -53,3 +53,13 @@ def bin_all_shots():
         print(f'adding shot {shotno} to binned traces')
         bt.add_stream(st)
     return bt
+
+def rebin(old_bt, new_bin_size):
+    assert(new_bin_size > old_bt.bin_size)
+    min_offset, max_offset = old_bt.offsets[0], old_bt.offsets[-1]
+    new_bt = BinnedTraces(min_offset, max_offset, new_bin_size, old_bt.binned.shape[1])
+    for i in range(len(old_bt.offsets)):
+        j = int((new_bt.round_to_bin(old_bt.offsets[i]) - new_bt.offsets[0]) / new_bt.bin_size)
+        new_bt.counts[j] += old_bt.counts[i]
+        new_bt.binned[j] += old_bt.binned[i]
+    return new_bt
