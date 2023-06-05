@@ -1,12 +1,18 @@
+# TODO: clean this up
+# Probably should store the sampling rate in the BinnedTraces object.
+
 import numpy as np
 import obspy
+import obspy.signal.trigger
 from matplotlib import pyplot as plt
+import copy
+import pickle
 
 import utils
 
 class BinnedTraces():
     def round_to_bin(self, x):
-        return np.round(x / self.bin_size) * self.bin_size
+        return np.rint(x / self.bin_size) * self.bin_size
 
     def __init__(self, min_offset, max_offset, bin_size, trace_len):
         self.bin_size = bin_size
@@ -21,14 +27,17 @@ class BinnedTraces():
             self.counts[j] += 1
             self.binned[j] += tr.data
 
-    def plot(self, sampling_rate, red_vel, scale=1.0, show=True):
+    def plot(self, sampling_rate, red_vel, scale=1.0, show=True, div_by_counts=True):
         fig, axs = plt.subplots(2, 1, sharex=True, height_ratios=[0.8,0.2])
         axs[0].set_xlim(self.offsets.max() + 2, self.offsets.min() - 2)
-        axs[0].set_ylim(0, 8)
+        axs[0].set_ylim(-2, 8)
         axs[0].set_ylabel(f'Reduced time w/ v={red_vel:0.1f} km/s (s)')
         axs[1].set_xlabel('Offset (km)')
         axs[1].set_ylabel('# of traces')
-        x = (scale * self.bin_size * self.binned / self.counts[:,np.newaxis] + self.offsets[:,np.newaxis])
+        if div_by_counts:
+            x = (scale * self.bin_size * self.binned / self.counts[:,np.newaxis] + self.offsets[:,np.newaxis])
+        else:
+            x = (scale * self.bin_size * self.binned + self.offsets[:,np.newaxis])
         y = np.subtract.outer(np.arange(self.binned.shape[1]) / sampling_rate, self.offsets / red_vel)
         z = np.zeros(x.shape) + self.offsets[:,np.newaxis]
         where = x > z
@@ -43,6 +52,14 @@ class BinnedTraces():
         if show:
             plt.show()
 
+    def save(self, path):
+        with open(path, 'wb') as f:
+            pickle.dump(self, f)
+
+def load_binned_traces(path):
+    with open(path, 'rb') as f:
+        return pickle.load(f)
+
 def bin_all_shots():
     bt = BinnedTraces(28, 240, 0.1, 60 * 500)
     for shotno in range(991, 1392):
@@ -50,6 +67,35 @@ def bin_all_shots():
         st = utils.load_shot(shotno)
         print(f'processing shot {shotno}')
         utils.process_stream_inplace(st)
+        print(f'adding shot {shotno} to binned traces')
+        bt.add_stream(st)
+    return bt
+
+def bin_all_shots_raw():
+    bt = BinnedTraces(28, 240, 0.1, 60 * 500)
+    for shotno in range(991, 1392):
+        print(f'loading shot {shotno}')
+        st = utils.load_shot(shotno)
+        print(f'applying bandpass to shot {shotno}')
+        utils.bandpass_stream_inplace(st)
+        print(f'adding shot {shotno} to binned traces')
+        bt.add_stream(st)
+    return bt
+
+def bin_all_shots_sta_lta():
+    bt = BinnedTraces(28, 240, 0.25, 60 * 500)
+    for shotno in range(991, 1392):
+        print(f'loading shot {shotno}')
+        st = utils.load_shot(shotno)
+        print(f'applying bandpass to shot {shotno}')
+        utils.bandpass_stream_inplace(st)
+        print(f'applying sta-lta to shot {shotno}')
+        for t in st:
+            t.data = obspy.signal.trigger.classic_sta_lta(t.data, 0.05 * 500, 5.0 * 500)
+            t.data /= np.abs(t.data).max() # normalize
+            if np.isnan(t.data).any():
+                print('nans!!!')
+                return
         print(f'adding shot {shotno} to binned traces')
         bt.add_stream(st)
     return bt
@@ -63,3 +109,21 @@ def rebin(old_bt, new_bin_size):
         new_bt.counts[j] += old_bt.counts[i]
         new_bt.binned[j] += old_bt.binned[i]
     return new_bt
+
+def apply_to_binned(bt, func):
+    new_bt = copy.deepcopy(bt)
+    for i in range(new_bt.binned.shape[0]):
+        new_bt.binned[i] = func(new_bt.binned[i])
+    return new_bt
+
+def plot_trace(t):
+    x = np.arange(t.shape[0])
+    plt.plot(x, t, 'k', linewidth=0.1)
+    y0 = np.zeros(t.shape)
+    plt.fill_between(x, t, y0, where=t>0, facecolor='k')
+    plt.show()
+
+def sta_lta_and_normalize(t, sta_samples, lta_samples):
+    t_ = obspy.signal.trigger.classic_sta_lta(t, sta_samples, lta_samples)
+    t_ /= t_.max()
+    return t_

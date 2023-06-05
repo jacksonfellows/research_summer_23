@@ -51,3 +51,12 @@ def process_stream_inplace(st):
         else:
             tr.filter('bandpass', freqmin=3, freqmax=20, zerophase=True)
             agc(tr, 2.0 * tr.stats.sampling_rate)
+
+def bandpass_stream_inplace(st):
+    for tr in st:
+        # Some instruments are messed up.
+        if tr.stats.segy.trace_header.trace_number_within_the_original_field_record in {3025, 4016}:
+            print(f'removing trace {tr} with station number {tr.stats.segy.trace_header.trace_number_within_the_original_field_record}')
+            st.remove(tr)
+        else:
+            tr.filter('bandpass', freqmin=3, freqmax=20, zerophase=True)
