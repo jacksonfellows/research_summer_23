@@ -64,16 +64,6 @@ def load_binned_traces(path):
     with open(path, 'rb') as f:
         return pickle.load(f)
 
-def bin_all_shots():
-    bt = BinnedTraces(28, 240, 0.1, 60 * 500)
-    for shotno in range(991, 1392):
-        print(f'loading shot {shotno}')
-        st = utils.load_shot(shotno)
-        print(f'processing shot {shotno}')
-        utils.process_stream_inplace(st)
-        print(f'adding shot {shotno} to binned traces')
-        bt.add_stream(st)
-    return bt
 def min_dist_to_square(lat, lon, min_lat, max_lat, min_lon, max_lon):
     assert not (min_lat < lat < max_lat and min_lon < lon < max_lon) # assume lat, lon outside of square
     corners = list(itertools.product((min_lat, max_lat), (min_lon, max_lon)))
@@ -84,16 +74,6 @@ def min_dist_to_square(lat, lon, min_lat, max_lat, min_lon, max_lon):
         sides += [(min_lat, lon), (max_lat, lon)]
     return min(obspy.geodetics.gps2dist_azimuth(lat, lon, lat_, lon_)[0] for lat_, lon_ in corners + sides)
 
-def bin_all_shots_raw():
-    bt = BinnedTraces(28, 240, 0.1, 60 * 500)
-    for shotno in range(991, 1392):
-        print(f'loading shot {shotno}')
-        st = utils.load_shot(shotno)
-        print(f'applying bandpass to shot {shotno}')
-        utils.bandpass_stream_inplace(st)
-        print(f'adding shot {shotno} to binned traces')
-        bt.add_stream(st)
-    return bt
 def max_dist_to_square(lat, lon, min_lat, max_lat, min_lon, max_lon):
     assert not (min_lat < lat < max_lat and min_lon < lon < max_lon) # assume lat, lon outside of square
     corners = list(itertools.product((min_lat, max_lat), (min_lon, max_lon)))
@@ -117,9 +97,12 @@ def calc_min_max_offsets_km(shot_nos):
             pass
     return min_offset / 1e3, max_offset / 1e3
 
-def bin_all_shots_sta_lta():
-    bt = BinnedTraces(28, 240, 0.25, 60 * 500)
-    for shotno in range(991, 1392):
+def bin_all_shots_sta_lta(shot_nos):
+    min_offset, max_offset = calc_min_max_offsets_km(shot_nos)
+    min_offset, max_offset = np.floor(min_offset), np.ceil(max_offset)
+    print(f'min_offset = {min_offset}, max_offset = {max_offset}')
+    bt = BinnedTraces(min_offset, max_offset, 0.25, 60 * 500)
+    for shotno in shot_nos:
         print(f'loading shot {shotno}')
         st = utils.load_shot(shotno)
         print(f'applying bandpass to shot {shotno}')
@@ -128,9 +111,7 @@ def bin_all_shots_sta_lta():
         for t in st:
             t.data = obspy.signal.trigger.classic_sta_lta(t.data, 0.05 * 500, 5.0 * 500)
             t.data /= np.abs(t.data).max() # normalize
-            if np.isnan(t.data).any():
-                print('nans!!!')
-                return
+            assert not np.isnan(t.data).any()
         print(f'adding shot {shotno} to binned traces')
         bt.add_stream(st)
     return bt
