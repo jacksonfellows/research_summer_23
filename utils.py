@@ -27,6 +27,9 @@ def load_shot_df():
 
 shot_df = load_shot_df()
 
+def shots_for_line(lineno):
+    return list(shot_df[shot_df.lineno == lineno].index)
+
 def shot_lat_lon(shotno):
     info = shot_df.loc[shotno]
     return info.lat, -info.lon  # There seems to be a problem with the shot locations. For now just fix it here.
