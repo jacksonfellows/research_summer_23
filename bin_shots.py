@@ -28,10 +28,13 @@ class BinnedTraces():
             self.counts[j] += 1
             self.binned[j] += tr.data
 
-    def plot(self, sampling_rate, red_vel, scale=1.0, show=True, div_by_counts=True):
+    def plot(self, sampling_rate, red_vel, scale=1.0, show=True, div_by_counts=True, ylim=None):
         fig, axs = plt.subplots(2, 1, sharex=True, height_ratios=[0.8,0.2])
         axs[0].set_xlim(self.offsets.max() + 2, self.offsets.min() - 2)
-        axs[0].set_ylim(-2, 8)
+        if ylim is not None:
+            axs[0].set_ylim(*ylim)
+        else:
+            axs[0].set_ylim(-2, 8)
         axs[0].set_ylabel(f'Reduced time w/ v={red_vel:0.1f} km/s (s)')
         axs[1].set_xlabel('Offset (km)')
         axs[1].set_ylabel('# of traces')
