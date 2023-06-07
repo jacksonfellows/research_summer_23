@@ -32,6 +32,8 @@ def shots_for_line(lineno):
 
 def shot_lat_lon(shotno):
     info = shot_df.loc[shotno]
+    if len(info) != 6:
+        info = info.iloc[0]
     return info.lat, -info.lon  # There seems to be a problem with the shot locations. For now just fix it here.
 
 def source_receiver_offset(tr):
