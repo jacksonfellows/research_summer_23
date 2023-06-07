@@ -1,4 +1,5 @@
 __pycache__/
 shots/
 shot_plots/
+single_shot_plots/
 *.pickle
