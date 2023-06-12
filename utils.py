@@ -4,6 +4,7 @@ import obspy
 import pandas as pd
 import os
 import glob
+import itertools
 
 
 def load_shot(shotno):
@@ -100,3 +101,78 @@ def bandpass_stream_inplace(st):
             st.remove(tr)
         else:
             tr.filter("bandpass", freqmin=3, freqmax=20, zerophase=True)
+
+
+def remove_bad_traces_inplace(st):
+    for tr in st:
+        # Some instruments are messed up.
+        if (
+            tr.stats.segy.trace_header.trace_number_within_the_original_field_record
+            in {3025, 4016}
+        ):
+            print(
+                f"removing trace {tr} with station number {tr.stats.segy.trace_header.trace_number_within_the_original_field_record}"
+            )
+            st.remove(tr)
+
+
+def min_dist_to_square(lat, lon, min_lat, max_lat, min_lon, max_lon):
+    assert not (
+        min_lat < lat < max_lat and min_lon < lon < max_lon
+    )  # assume lat, lon outside of square
+    corners = list(itertools.product((min_lat, max_lat), (min_lon, max_lon)))
+    sides = []
+    if min_lat < lat < max_lat:
+        sides += [(lat, min_lon), (lat, max_lon)]
+    if min_lon < lon < max_lon:
+        sides += [(min_lat, lon), (max_lat, lon)]
+    return min(
+        obspy.geodetics.gps2dist_azimuth(lat, lon, lat_, lon_)[0]
+        for lat_, lon_ in corners + sides
+    )
+
+
+def max_dist_to_square(lat, lon, min_lat, max_lat, min_lon, max_lon):
+    assert not (
+        min_lat < lat < max_lat and min_lon < lon < max_lon
+    )  # assume lat, lon outside of square
+    corners = list(itertools.product((min_lat, max_lat), (min_lon, max_lon)))
+    return max(
+        obspy.geodetics.gps2dist_azimuth(lat, lon, lat_, lon_)[0]
+        for lat_, lon_ in corners
+    )
+
+
+def calc_min_max_offsets_km(shot_nos):
+    min_lat, max_lat, min_lon, max_lon = (
+        float("inf"),
+        float("-inf"),
+        float("inf"),
+        float("-inf"),
+    )
+    for stat in stat_df.index:
+        lat, lon = stat_lat_lon(stat)
+        min_lat, max_lat, min_lon, max_lon = (
+            min(lat, min_lat),
+            max(lat, max_lat),
+            min(lon, min_lon),
+            max(lon, max_lon),
+        )
+    min_offset, max_offset = float("inf"), float("-inf")
+    for shot in shot_nos:
+        try:
+            lat, lon = shot_lat_lon(shot)
+            try:
+                min_offset = min(
+                    min_offset,
+                    min_dist_to_square(lat, lon, min_lat, max_lat, min_lon, max_lon),
+                )
+                max_offset = max(
+                    max_offset,
+                    max_dist_to_square(lat, lon, min_lat, max_lat, min_lon, max_lon),
+                )
+            except ValueError:
+                pass
+        except KeyError:
+            pass
+    return min_offset / 1e3, max_offset / 1e3
