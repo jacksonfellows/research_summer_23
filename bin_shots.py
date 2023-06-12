@@ -4,6 +4,7 @@
 import numpy as np
 import obspy
 import obspy.signal.trigger
+import obspy.signal.filter
 from matplotlib import pyplot as plt
 import copy
 import pickle
@@ -164,6 +165,28 @@ def bin_all_shots_sta_lta(shot_nos):
                 print(f"nan! - skipping trace {t}")
                 st.remove(t)
         print(f"adding shot {shotno} to binned traces")
+        bt.add_stream(st)
+    return bt
+
+
+def bin_all_shots_envelope_sta_lta(shot_nos):
+    min_offset, max_offset = calc_min_max_offsets_km(shot_nos)
+    min_offset, max_offset = np.floor(min_offset), np.ceil(max_offset)
+    print(f"min_offset = {min_offset}, max_offset = {max_offset}")
+    bt = BinnedTraces(min_offset, max_offset, 0.25, 60 * 500)
+    for shotno in shot_nos:
+        print(f"loading shot {shotno}")
+        st = utils.load_shot(shotno)
+        print(f"applying bandpass to shot {shotno}")
+        utils.bandpass_stream_inplace(st)
+        print(f"applying envelope and sta-lta to shot {shotno}")
+        for t in st:
+            t.data = obspy.signal.filter.envelope(t.data)
+            t.data = obspy.signal.trigger.classic_sta_lta(t.data, 0.05 * 500, 5.0 * 500)
+            t.data /= np.abs(t.data).max()  # normalize
+            if np.isnan(t.data).any():
+                print(f"nan! - skipping trace {t}")
+                st.remove(t)
         bt.add_stream(st)
     return bt
 
