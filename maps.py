@@ -1,22 +1,34 @@
 import pygmt
+import os
 
 import utils
 
 
-def plot_lines(linenos):
+figs_dir = "figures"
+
+
+def make_overview_map():
     fig = pygmt.Figure()
-    region = [-158, -150, 54, 59]
+    fig.coast(
+        projection="C-153/57.5/12c",
+        region="US.AK+R5",
+        shorelines=["1/0.5p", "2/0.5p"],
+        frame="afg",
+        land="grey",
+    )
+    fig.savefig(os.path.join(figs_dir, "overview_map.pdf"))
+
+
+def make_aacse_map():
+    fig = pygmt.Figure()
+    region = [-165, -147, 51, 60]
+    fig.coast(
+        projection="M12c",
+        region=region,
+        shorelines=["1/0.5p", "2/0.5p"],
+        frame="a2f",
+        land="grey",
+    )
     grid = pygmt.datasets.load_earth_relief(resolution="15s", region=region)
-    fig.grdimage(grid=grid, projection="M15c", cmap="geo", frame=True)
-    pygmt.makecpt(cmap="categorical", series=(min(linenos), max(linenos) + 1, 1))
-    print("plotting nodes")
-    fig.plot(x=utils.stat_df.lon, y=utils.stat_df.lat, style="c0.06c", fill="red")
-    for lineno in linenos:
-        print(f"plotting line {lineno}")
-        shot_nos = utils.shots_for_line(lineno)
-        df = utils.shot_df.loc[shot_nos]
-        fig.plot(
-            x=-df.lon, y=df.lat, cmap=True, zvalue=lineno, pen="thick,+z", label=lineno
-        )
-    fig.legend()
-    fig.show()
+    fig.grdimage(grid=grid, cmap="geo")
+    fig.savefig(os.path.join(figs_dir, "aacse_map.pdf"))
