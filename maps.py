@@ -1,10 +1,18 @@
 import pygmt
 import os
+import geopandas
 
 import utils
 
 
 figs_dir = "figures"
+
+
+def load_usgs_faults_for_region(region):
+    return geopandas.read_file(
+        "./Qfaults_GIS/SHP/Qfaults_US_Database.dbf",
+        bbox=(region[0], region[2], region[1], region[3]),
+    )
 
 
 def make_overview_map():
@@ -21,14 +29,15 @@ def make_overview_map():
 
 def make_aacse_map():
     fig = pygmt.Figure()
-    region = [-165, -147, 51, 60]
+    region = (-165, -147, 51, 60)
     fig.coast(
         projection="M12c",
         region=region,
-        shorelines=["1/0.5p", "2/0.5p"],
+        shorelines=("1/0.5p", "2/0.5p"),
         frame="a2f",
         land="grey",
     )
     grid = pygmt.datasets.load_earth_relief(resolution="15s", region=region)
     fig.grdimage(grid=grid, cmap="geo")
+    fig.plot(load_usgs_faults_for_region(region))
     fig.savefig(os.path.join(figs_dir, "aacse_map.pdf"))
