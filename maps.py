@@ -43,10 +43,16 @@ def make_aacse_map():
     fig.grdimage(grid=grid, cmap="geo")
 
     # faults
-    fig.plot(load_usgs_faults_for_region(region))
+    fig.plot(load_usgs_faults_for_region(region), pen="0.02c", label="Mapped Fault")
 
     # shots
-    fig.plot(x=utils._shot_df.lon, y=utils._shot_df.lat, style="c0.02c", fill="purple")
+    fig.plot(
+        x=utils._shot_df.lon,
+        y=utils._shot_df.lat,
+        style="c0.02c",
+        fill="purple",
+        label="Airgun Shot+S0.15c",
+    )
 
     # volcanoes
     fig.plot(
@@ -54,6 +60,7 @@ def make_aacse_map():
         y=utils._volcanoes_df.lat,
         style="t0.2c",
         fill="black",
+        label="Volcano",
     )
 
     # nodal stations
@@ -62,6 +69,7 @@ def make_aacse_map():
         y=utils._node_df.lat,
         style="c0.03c",
         fill="red",
+        label="Nodal Station+S0.15c",
     )
 
     # broadband stations
@@ -71,6 +79,7 @@ def make_aacse_map():
         style="s0.2c",
         fill="orange",
         pen="black",
+        label="Broadband Station",
     )
 
     # bathymetry/elevation scale
@@ -81,5 +90,9 @@ def make_aacse_map():
             frame=["a3000f1000", "x+lBathymetry/Elevation", "y+lm"],
             position="x0.5c/8c+w3.5c+h",
         )
+
+    # legend
+    with pygmt.config(FONT="8"):
+        fig.legend(position="JBR+jBR+o0.2c", box="+gwhite+p1p")
 
     fig.savefig(os.path.join(figs_dir, "aacse_map.pdf"))
