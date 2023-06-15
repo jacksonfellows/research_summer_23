@@ -13,8 +13,8 @@
 version: 1
 metadata:
   content_hash:
-    osx-arm64: 4b68887a88766f78ebd57da7e8984893e95197087bec7c387b49a8353b27ddc3
-    win-64: bea31d1b2c693bf18ee8a352c36e865a5f60169e8af1500cd5ecd8d71978db12
+    osx-arm64: c2184265ae8e91a580c19fce7717a7ed60f6eabfbf87d34c30b8dba8fcf87e88
+    win-64: 96a0088f451bda6437e4e3717b4f6e19c4fdc7e39a7af3ede1a7a0f7ed4c7b61
   channels:
   - url: conda-forge
     used_env_vars: []
@@ -1118,6 +1118,18 @@ package:
     sha256: 23676470b591b100393bb0f6c46fe10624dcbefc696a6a9f42932ed8816ef0ea
   category: main
   optional: false
+- name: colorama
+  version: 0.4.6
+  manager: conda
+  platform: osx-arm64
+  dependencies:
+    python: '>=3.7'
+  url: https://conda.anaconda.org/conda-forge/noarch/colorama-0.4.6-pyhd8ed1ab_0.tar.bz2
+  hash:
+    md5: 3faab06a954c2a04039983f2c4a50d99
+    sha256: 2c1b2e9755ce3102bca8d69e8f26e4f087ece73f50418186aee7c74bef8e1698
+  category: main
+  optional: false
 - name: cycler
   version: 0.11.0
   manager: conda
@@ -1152,6 +1164,18 @@ package:
   hash:
     md5: a2f2138597905eaa72e561d8efb42cf3
     sha256: 0c7bb50e1382615a660468dc531b8b17c5b91b88a02ed131c8e3cc63db507ce2
+  category: main
+  optional: false
+- name: exceptiongroup
+  version: 1.1.1
+  manager: conda
+  platform: osx-arm64
+  dependencies:
+    python: '>=3.7'
+  url: https://conda.anaconda.org/conda-forge/noarch/exceptiongroup-1.1.1-pyhd8ed1ab_0.conda
+  hash:
+    md5: 7312299d7a0ea4993159229b7d2dceb2
+    sha256: f073c3ba993912f1c0027bc34a54975642885f0a4cd5f9dc42a17ca945df2c18
   category: main
   optional: false
 - name: executing
@@ -1219,6 +1243,18 @@ package:
   hash:
     md5: 34272b248891bddccc64479f9a7fffed
     sha256: 9887c35c374ec1847f167292d3fde023cb4c994a4ceeec283072b95440131f09
+  category: main
+  optional: false
+- name: iniconfig
+  version: 2.0.0
+  manager: conda
+  platform: osx-arm64
+  dependencies:
+    python: '>=3.7'
+  url: https://conda.anaconda.org/conda-forge/noarch/iniconfig-2.0.0-pyhd8ed1ab_0.conda
+  hash:
+    md5: f800d2da156d08e289b14e87e43c1ae5
+    sha256: 38740c939b668b36a50ef455b077e8015b8c9cf89860d421b3fff86048f49666
   category: main
   optional: false
 - name: kiwisolver
@@ -1413,6 +1449,18 @@ package:
     sha256: a1ed1a094dd0d1b94a09ed85c283a0eb28943f2e6f22161fb45e128d35229738
   category: main
   optional: false
+- name: pluggy
+  version: 1.0.0
+  manager: conda
+  platform: osx-arm64
+  dependencies:
+    python: '>=3.8'
+  url: https://conda.anaconda.org/conda-forge/noarch/pluggy-1.0.0-pyhd8ed1ab_5.tar.bz2
+  hash:
+    md5: 7d301a0d25f424d96175f810935f0da9
+    sha256: c25e1757e4e90638bb1e778aba3ee5f3c01fae9752e3c3929f9be7d367f6c7f3
+  category: main
+  optional: false
 - name: ptyprocess
   version: 0.7.0
   manager: conda
@@ -1558,6 +1606,18 @@ package:
   hash:
     md5: a2995ee828f65687ac5b1e71a2ab1e0c
     sha256: c7a964811ba49c545236f7d6c2486b2ed493931660048a06fe94ecc851dd0b82
+  category: main
+  optional: false
+- name: tomli
+  version: 2.0.1
+  manager: conda
+  platform: osx-arm64
+  dependencies:
+    python: '>=3.7'
+  url: https://conda.anaconda.org/conda-forge/noarch/tomli-2.0.1-pyhd8ed1ab_0.tar.bz2
+  hash:
+    md5: 5844808ffab9ebdb694585b50ba02a96
+    sha256: 4cd48aba7cd026d17e86886af48d0d2ebc67ed36f87f6534f4b67138f5a5a58f
   category: main
   optional: false
 - name: tornado
@@ -1959,6 +2019,24 @@ package:
   hash:
     md5: f9d5eb2e412eddbaebc7c976a318ddd6
     sha256: 43576d17f86b18e9fcf3599375a91bbba72b2061d60a59d7fbdf0062634fb58b
+  category: main
+  optional: false
+- name: pytest
+  version: 7.3.2
+  manager: conda
+  platform: osx-arm64
+  dependencies:
+    colorama: ''
+    exceptiongroup: '>=1.0.0rc8'
+    iniconfig: ''
+    packaging: ''
+    pluggy: '>=0.12,<2.0'
+    python: '>=3.8'
+    tomli: '>=1.0.0'
+  url: https://conda.anaconda.org/conda-forge/noarch/pytest-7.3.2-pyhd8ed1ab_0.conda
+  hash:
+    md5: 8907018dd1302aada2632ca679e25ccd
+    sha256: 18c4493e7739d8f5b7674f8149821dc9fd861d2b1fbd24829afdcba692792b47
   category: main
   optional: false
 - name: python-dateutil
@@ -3830,6 +3908,18 @@ package:
     sha256: 0c7bb50e1382615a660468dc531b8b17c5b91b88a02ed131c8e3cc63db507ce2
   category: main
   optional: false
+- name: exceptiongroup
+  version: 1.1.1
+  manager: conda
+  platform: win-64
+  dependencies:
+    python: '>=3.7'
+  url: https://conda.anaconda.org/conda-forge/noarch/exceptiongroup-1.1.1-pyhd8ed1ab_0.conda
+  hash:
+    md5: 7312299d7a0ea4993159229b7d2dceb2
+    sha256: f073c3ba993912f1c0027bc34a54975642885f0a4cd5f9dc42a17ca945df2c18
+  category: main
+  optional: false
 - name: executing
   version: 1.2.0
   manager: conda
@@ -3883,6 +3973,18 @@ package:
   hash:
     md5: 34272b248891bddccc64479f9a7fffed
     sha256: 9887c35c374ec1847f167292d3fde023cb4c994a4ceeec283072b95440131f09
+  category: main
+  optional: false
+- name: iniconfig
+  version: 2.0.0
+  manager: conda
+  platform: win-64
+  dependencies:
+    python: '>=3.7'
+  url: https://conda.anaconda.org/conda-forge/noarch/iniconfig-2.0.0-pyhd8ed1ab_0.conda
+  hash:
+    md5: f800d2da156d08e289b14e87e43c1ae5
+    sha256: 38740c939b668b36a50ef455b077e8015b8c9cf89860d421b3fff86048f49666
   category: main
   optional: false
 - name: kiwisolver
@@ -4117,6 +4219,18 @@ package:
   hash:
     md5: 415f0ebb6198cc2801c73438a9fb5761
     sha256: a1ed1a094dd0d1b94a09ed85c283a0eb28943f2e6f22161fb45e128d35229738
+  category: main
+  optional: false
+- name: pluggy
+  version: 1.0.0
+  manager: conda
+  platform: win-64
+  dependencies:
+    python: '>=3.8'
+  url: https://conda.anaconda.org/conda-forge/noarch/pluggy-1.0.0-pyhd8ed1ab_5.tar.bz2
+  hash:
+    md5: 7d301a0d25f424d96175f810935f0da9
+    sha256: c25e1757e4e90638bb1e778aba3ee5f3c01fae9752e3c3929f9be7d367f6c7f3
   category: main
   optional: false
 - name: ply
@@ -4809,6 +4923,24 @@ package:
   hash:
     md5: 56cd9fe388baac0e90c7149cfac95b60
     sha256: b3a612bc887f3dd0fb7c4199ad8e342bd148cf69a9b74fd9468a18cf2bef07b7
+  category: main
+  optional: false
+- name: pytest
+  version: 7.3.2
+  manager: conda
+  platform: win-64
+  dependencies:
+    colorama: ''
+    exceptiongroup: '>=1.0.0rc8'
+    iniconfig: ''
+    packaging: ''
+    pluggy: '>=0.12,<2.0'
+    python: '>=3.8'
+    tomli: '>=1.0.0'
+  url: https://conda.anaconda.org/conda-forge/noarch/pytest-7.3.2-pyhd8ed1ab_0.conda
+  hash:
+    md5: 8907018dd1302aada2632ca679e25ccd
+    sha256: 18c4493e7739d8f5b7674f8149821dc9fd861d2b1fbd24829afdcba692792b47
   category: main
   optional: false
 - name: python-dateutil
