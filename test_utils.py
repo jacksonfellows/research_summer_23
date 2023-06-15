@@ -36,3 +36,30 @@ def test_calc_min_max_offsets_km():
     min_offset, max_offset = utils.calc_min_max_offsets_km([3497])
     assert min_offset < 100
     assert 130 < max_offset
+
+
+# Again, good to have some sanity checks before I rewrite stuff.
+
+
+def test_shots_for_line():
+    # Manually created these by looking at the shot spreadsheet.
+    l1 = utils.shots_for_line(1)
+    assert l1[0] == 991 and l1[-1] == 1391
+    l15 = utils.shots_for_line(15)
+    assert l15[0] == 16175 and l15[-1] == 17685
+
+
+def test_shot_lat_lon():
+    # Manually created these by looking at the shot spreadsheet. Note
+    # that in the spreadsheet the longitudes are positive when they
+    # should be negative.
+    assert utils.shot_lat_lon(991) == (57.220942, -152.08304)
+    assert utils.shot_lat_lon(5079) == (56.288621, -153.34762)
+    assert utils.shot_lat_lon(5323) == (55.496843, -152.67804)
+    assert utils.shot_lat_lon(7093) == (55.077562, -152.92654)
+    assert utils.shot_lat_lon(9305) == (55.214477, -153.63619)
+    assert utils.shot_lat_lon(11324) == (55.554297, -154.53278)
+    assert utils.shot_lat_lon(13205) == (55.963331, -155.36349)
+    assert utils.shot_lat_lon(15256) == (55.058355, -155.29734)
+    assert utils.shot_lat_lon(23167) == (54.201261, -156.90926)
+    assert utils.shot_lat_lon(22084) == (53.684722, -156.42038)

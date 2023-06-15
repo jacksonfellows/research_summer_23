@@ -24,31 +24,16 @@ def node_lat_lon(stat_code):
     return info.lat, info.lon
 
 
-def load_shot_df():
-    return pd.read_excel(
-        "PASSCAL_SHOT.xlsx",
-        names=["lineno", "shotno", "lat", "lon", "unknown", "time", "linename"],
-        index_col=1,
-        header=None,
-        usecols="A:G",
-    )
-
-
-shot_df = load_shot_df()
+_shot_df = pd.read_csv("shots_table.csv")
 
 
 def shots_for_line(lineno):
-    return list(shot_df[shot_df.lineno == lineno].index)
+    return list(_shot_df[_shot_df.lineno == lineno].shotno)
 
 
 def shot_lat_lon(shotno):
-    info = shot_df.loc[shotno]
-    if len(info) != 6:
-        info = info.iloc[0]
-    return (
-        info.lat,
-        -info.lon,
-    )  # There seems to be a problem with the shot locations. For now just fix it here.
+    info = _shot_df[_shot_df.shotno == shotno].iloc[0]
+    return (info.lat, info.lon)
 
 
 def source_receiver_offset(tr):
