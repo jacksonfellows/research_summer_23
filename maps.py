@@ -37,7 +37,37 @@ def make_aacse_map():
         frame="a2f",
         land="grey",
     )
+
+    # bathymetry & topography
     grid = pygmt.datasets.load_earth_relief(resolution="15s", region=region)
     fig.grdimage(grid=grid, cmap="geo")
+
+    # faults
     fig.plot(load_usgs_faults_for_region(region))
+
+    # volcanoes
+    fig.plot(
+        x=utils._volcanoes_df.lon,
+        y=utils._volcanoes_df.lat,
+        style="t0.2c",
+        fill="black",
+    )
+
+    # nodal stations
+    fig.plot(
+        x=utils._node_df.lon,
+        y=utils._node_df.lat,
+        style="c0.03c",
+        fill="red",
+    )
+
+    # broadband stations
+    fig.plot(
+        x=utils._broadband_df.lon,
+        y=utils._broadband_df.lat,
+        style="s0.2c",
+        fill="orange",
+        pen="black",
+    )
+
     fig.savefig(os.path.join(figs_dir, "aacse_map.pdf"))

@@ -16,15 +16,16 @@ def load_shot(shotno):
     return stream
 
 
+# locations
 _node_df = pd.read_csv("node_lat_lon_elev.csv")
+_shot_df = pd.read_csv("shots_table.csv")
+_broadband_df = pd.read_csv("broadband_lat_lon_elev.csv")
+_volcanoes_df = pd.read_csv("volcanoes-2023-06-15_14-58-44_-0600_cleaned.csv")
 
 
 def node_lat_lon(stat_code):
     info = _node_df[_node_df.code == stat_code].iloc[0]
     return info.lat, info.lon
-
-
-_shot_df = pd.read_csv("shots_table.csv")
 
 
 def shots_for_line(lineno):
