@@ -17,14 +17,14 @@ def load_shot(shotno):
 
 
 def load_station_df():
-    return pd.read_csv("station_lat_lon_elev.csv", index_col=1)
+    return pd.read_csv("station_lat_lon_elev.csv")
 
 
 stat_df = load_station_df()
 
 
 def stat_lat_lon(stat_code):
-    info = stat_df.loc[stat_code]
+    info = stat_df[stat_df.code == stat_code].iloc[0]
     return info.lat, info.lon
 
 
@@ -150,8 +150,8 @@ def calc_min_max_offsets_km(shot_nos):
         float("inf"),
         float("-inf"),
     )
-    for stat in stat_df.index:
-        lat, lon = stat_lat_lon(stat)
+    for _, row in stat_df.iterrows():
+        lat, lon = row.lat, row.lon
         min_lat, max_lat, min_lon, max_lon = (
             min(lat, min_lat),
             max(lat, max_lat),
