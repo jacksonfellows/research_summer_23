@@ -45,6 +45,9 @@ def make_aacse_map():
     # faults
     fig.plot(load_usgs_faults_for_region(region))
 
+    # shots
+    fig.plot(x=utils._shot_df.lon, y=utils._shot_df.lat, style="c0.02c", fill="purple")
+
     # volcanoes
     fig.plot(
         x=utils._volcanoes_df.lon,
