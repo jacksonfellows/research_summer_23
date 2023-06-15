@@ -16,15 +16,11 @@ def load_shot(shotno):
     return stream
 
 
-def load_station_df():
-    return pd.read_csv("station_lat_lon_elev.csv")
+_node_df = pd.read_csv("node_lat_lon_elev.csv")
 
 
-stat_df = load_station_df()
-
-
-def stat_lat_lon(stat_code):
-    info = stat_df[stat_df.code == stat_code].iloc[0]
+def node_lat_lon(stat_code):
+    info = _node_df[_node_df.code == stat_code].iloc[0]
     return info.lat, info.lon
 
 
@@ -60,7 +56,7 @@ def source_receiver_offset(tr):
     stat_code = tr.stats.segy.trace_header.trace_number_within_the_original_field_record
     shotno = tr.stats.segy.trace_header.energy_source_point_number
     dist_m, _, _ = obspy.geodetics.base.gps2dist_azimuth(
-        *stat_lat_lon(stat_code), *shot_lat_lon(shotno)
+        *node_lat_lon(stat_code), *shot_lat_lon(shotno)
     )
     return dist_m
 
@@ -150,7 +146,7 @@ def calc_min_max_offsets_km(shot_nos):
         float("inf"),
         float("-inf"),
     )
-    for _, row in stat_df.iterrows():
+    for _, row in _node_df.iterrows():
         lat, lon = row.lat, row.lon
         min_lat, max_lat, min_lon, max_lon = (
             min(lat, min_lat),

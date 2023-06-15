@@ -19,7 +19,7 @@ nodal_station_test_stat_lat_lon = (
 
 def test_stat_lat_lon():
     for stat, lat_lon in nodal_station_test_stat_lat_lon:
-        assert utils.stat_lat_lon(stat) == lat_lon
+        assert utils.node_lat_lon(stat) == lat_lon
 
 
 def test_calc_min_max_offsets_km():
