@@ -13,8 +13,8 @@
 version: 1
 metadata:
   content_hash:
-    osx-arm64: 87cadb62d6912d83802912a69f3e6edebc6e24c0623cf050f077d41d5af4b4cf
-    win-64: 33745b72169c60fe6edd9c3847b718751abc423bda3fabcb379414601a3106c6
+    osx-arm64: 4b68887a88766f78ebd57da7e8984893e95197087bec7c387b49a8353b27ddc3
+    win-64: bea31d1b2c693bf18ee8a352c36e865a5f60169e8af1500cd5ecd8d71978db12
   channels:
   - url: conda-forge
     used_env_vars: []
@@ -1461,6 +1461,18 @@ package:
     sha256: 4acc7151cef5920d130f2e0a7615559cce8bfb037aeecb14d4d359ae3d9bc51b
   category: main
   optional: false
+- name: pyshp
+  version: 2.3.1
+  manager: conda
+  platform: osx-arm64
+  dependencies:
+    python: '>=3.6'
+  url: https://conda.anaconda.org/conda-forge/noarch/pyshp-2.3.1-pyhd8ed1ab_0.tar.bz2
+  hash:
+    md5: 92a889dc236a5197612bc85bee6d7174
+    sha256: 41eced0d5e855bc52018f200b239d627daa38ad78a655ffa2f1efd95b07b6bce
+  category: main
+  optional: false
 - name: pysocks
   version: 1.7.1
   manager: conda
@@ -2644,6 +2656,27 @@ package:
   hash:
     md5: 254b5553bed6adf404ac09fa07cb54da
     sha256: cd98280dfb226ebb26b7d90da8f3342ecba66ea521b3df27e7a75bc709905502
+  category: main
+  optional: false
+- name: cartopy
+  version: 0.21.1
+  manager: conda
+  platform: osx-arm64
+  dependencies:
+    geos: '>=3.11.2,<3.11.3.0a0'
+    libcxx: '>=14.0.6'
+    matplotlib-base: '>=3.1'
+    numpy: '>=1.23.5,<2.0a0'
+    pyproj: '>=3.0.0'
+    pyshp: '>=2.1'
+    python: '>=3.11,<3.12.0a0'
+    python_abi: 3.11.*
+    scipy: '>=0.10'
+    shapely: '>=1.6.4'
+  url: https://conda.anaconda.org/conda-forge/osx-arm64/cartopy-0.21.1-py311hbf64cf6_1.conda
+  hash:
+    md5: 980dc730110f05d52215b54382d7ec42
+    sha256: 09997aa511121b4c7876f45babeeaec0c67e1974c079d958dfcc8e2a5c022691
   category: main
   optional: false
 - name: mapclassify
@@ -4144,6 +4177,18 @@ package:
   hash:
     md5: e8fbc1b54b25f4b08281467bc13b70cc
     sha256: 4acc7151cef5920d130f2e0a7615559cce8bfb037aeecb14d4d359ae3d9bc51b
+  category: main
+  optional: false
+- name: pyshp
+  version: 2.3.1
+  manager: conda
+  platform: win-64
+  dependencies:
+    python: '>=3.6'
+  url: https://conda.anaconda.org/conda-forge/noarch/pyshp-2.3.1-pyhd8ed1ab_0.tar.bz2
+  hash:
+    md5: 92a889dc236a5197612bc85bee6d7174
+    sha256: 41eced0d5e855bc52018f200b239d627daa38ad78a655ffa2f1efd95b07b6bce
   category: main
   optional: false
 - name: python-tzdata
@@ -5758,6 +5803,29 @@ package:
   hash:
     md5: 254b5553bed6adf404ac09fa07cb54da
     sha256: cd98280dfb226ebb26b7d90da8f3342ecba66ea521b3df27e7a75bc709905502
+  category: main
+  optional: false
+- name: cartopy
+  version: 0.21.1
+  manager: conda
+  platform: win-64
+  dependencies:
+    geos: '>=3.11.2,<3.11.3.0a0'
+    matplotlib-base: '>=3.1'
+    numpy: '>=1.23.5,<2.0a0'
+    pyproj: '>=3.0.0'
+    pyshp: '>=2.1'
+    python: '>=3.11,<3.12.0a0'
+    python_abi: 3.11.*
+    scipy: '>=0.10'
+    shapely: '>=1.6.4'
+    ucrt: '>=10.0.20348.0'
+    vc: '>=14.2,<15'
+    vs2015_runtime: '>=14.29.30139'
+  url: https://conda.anaconda.org/conda-forge/win-64/cartopy-0.21.1-py311h178a126_1.conda
+  hash:
+    md5: 407d26dff9a6dfd2989e274abf798da2
+    sha256: c56c718aabffd21d40d5cf49dee916b3c89fc4b166233226d581e0cc95b16108
   category: main
   optional: false
 - name: mapclassify
