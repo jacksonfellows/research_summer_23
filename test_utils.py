@@ -20,3 +20,19 @@ nodal_station_test_stat_lat_lon = (
 def test_stat_lat_lon():
     for stat, lat_lon in nodal_station_test_stat_lat_lon:
         assert utils.stat_lat_lon(stat) == lat_lon
+
+
+def test_calc_min_max_offsets_km():
+    # I made these test cases by looking at a few per-shot plots I had
+    # made previously.
+    min_offset, max_offset = utils.calc_min_max_offsets_km([991])
+    assert min_offset < 30
+    assert 70 < max_offset
+
+    min_offset, max_offset = utils.calc_min_max_offsets_km([1300])
+    assert min_offset < 160
+    assert 200 < max_offset
+
+    min_offset, max_offset = utils.calc_min_max_offsets_km([3497])
+    assert min_offset < 100
+    assert 130 < max_offset
