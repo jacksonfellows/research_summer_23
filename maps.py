@@ -70,4 +70,13 @@ def make_aacse_map():
         pen="black",
     )
 
+    # bathymetry/elevation scale
+    with pygmt.config(FONT="8"):
+        fig.colorbar(
+            cmap="geo",
+            truncate=[-8000, 3000],
+            frame=["a3000f1000", "x+lBathymetry/Elevation", "y+lm"],
+            position="x0.5c/8c+w3.5c+h",
+        )
+
     fig.savefig(os.path.join(figs_dir, "aacse_map.pdf"))
