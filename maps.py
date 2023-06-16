@@ -15,7 +15,12 @@ def load_usgs_faults_for_region(region):
     )
 
 
-rupture_zones = geopandas.read_file("./traced_rupture_zones.gpkg")
+def load_rupture_zones():
+    df = geopandas.read_file("./traced_rupture_zones_2.gpkg")
+    return df.sort_values(by=["rupture_name"])
+
+
+rupture_zones = load_rupture_zones()
 
 
 def make_overview_map():
@@ -49,7 +54,22 @@ def make_aacse_map():
     fig.plot(load_usgs_faults_for_region(region), pen="0.02c", label="Mapped Fault")
 
     # rupture zones
-    fig.plot(rupture_zones, pen="0.02c,4_4:4p", label="Historical Rupture Zones")
+    zone_colors = {  # Just picked these colors randomly, should definitely change them.
+        "1938": "purple",
+        "1946": "red",
+        "1948": "blue",
+        "1957": "green",
+        "1964": "pink",
+        "2020": "yellow",
+        "2021": "orange",
+    }
+    for i, row in rupture_zones.iterrows():
+        fig.plot(
+            rupture_zones.loc[[i]],  # a little silly
+            pen="0.02c,4_4:4p",
+            fill=f"{zone_colors[row.rupture_name]}@50",
+            label=f"{row.rupture_name} Rupture Zone",
+        )
 
     # shots
     fig.plot(
