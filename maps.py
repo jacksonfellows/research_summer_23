@@ -32,22 +32,37 @@ def make_overview_map():
         frame="afg",
         land="grey",
     )
+    fig.plot(
+        data=[
+            [aacse_map_region[0], aacse_map_region[2]],
+            [aacse_map_region[0], aacse_map_region[3]],
+            [aacse_map_region[1], aacse_map_region[3]],
+            [aacse_map_region[1], aacse_map_region[2]],
+            [aacse_map_region[0], aacse_map_region[2]],
+        ],
+        pen="1p,red",
+        straight_line="mp",
+    )
     fig.savefig(os.path.join(figs_dir, "overview_map.pdf"))
+
+
+aacse_map_region = (-165, -147, 51, 60)
 
 
 def make_aacse_map():
     fig = pygmt.Figure()
-    region = (-165, -147, 51, 60)
 
     # set area
-    fig.basemap(projection="M12c", region=region, frame="a2f")
+    fig.basemap(projection="M12c", region=aacse_map_region, frame="a2f")
 
     # bathymetry & topography
-    grid = pygmt.datasets.load_earth_relief(resolution="15s", region=region)
+    grid = pygmt.datasets.load_earth_relief(resolution="15s", region=aacse_map_region)
     fig.grdimage(grid=grid, cmap="geo")
 
     # faults
-    fig.plot(load_usgs_faults_for_region(region), pen="0.02c", label="Mapped Fault")
+    fig.plot(
+        load_usgs_faults_for_region(aacse_map_region), pen="0.02c", label="Mapped Fault"
+    )
 
     # rupture zones
     zone_colors = {  # Just picked these colors randomly, should definitely change them.
