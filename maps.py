@@ -60,20 +60,20 @@ def make_aacse_map():
         "2021": "orange",
     }
     zone_magnitudes = {
-        "1938": 8.2,
-        "1946": 8.6,
-        "1948": 7.5,
-        "1957": 9.1,
-        "1964": 9.2,
-        "2020": 7.8,
-        "2021": 8.2,
+        "1938": "M 8.2",
+        "1946": "M 8.6",
+        "1948": "M 7.5",
+        "1957": "M 9.1",
+        "1964": "M 9.2",
+        "2020": "Mw 7.8",
+        "2021": "Mw 8.2",
     }
     for i, row in rupture_zones.iterrows():
         fig.plot(
             rupture_zones.loc[[i]],  # a little silly
             pen="0.02c,4_4:4p",
             fill=f"{zone_colors[row.rupture_name]}@50",
-            label=f"{row.rupture_name} M{zone_magnitudes[row.rupture_name]}",
+            label=f"{row.rupture_name} {zone_magnitudes[row.rupture_name]}",
         )
 
     # shots
