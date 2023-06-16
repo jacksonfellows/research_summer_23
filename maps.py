@@ -22,16 +22,33 @@ def load_rupture_zones():
 
 rupture_zones = load_rupture_zones()
 
+plate_boundaries = geopandas.read_file("./tectonicplates-master/PB2002_boundaries.shp")
+
 
 def make_overview_map():
     fig = pygmt.Figure()
-    fig.coast(
-        projection="C-153/57.5/12c",
-        region="US.AK+R5",
-        shorelines=["1/0.5p", "2/0.5p"],
-        frame="afg",
-        land="grey",
+    region = "US.AK+R10"
+
+    # basemap
+    center_lon = aacse_map_region[0] + (aacse_map_region[1] - aacse_map_region[0]) / 2
+    center_lat = aacse_map_region[2] + (aacse_map_region[3] - aacse_map_region[2]) / 2
+    fig.basemap(
+        projection=f"C{center_lon}/{center_lat}/12c",
+        region=region,
+        frame=["x+10f", "y+5f"],
     )
+
+    # bathymetry & topography
+    grid = pygmt.datasets.load_earth_relief(resolution="01m", region=region)
+    fig.grdimage(grid=grid, cmap="geo")
+
+    # plate boundaries
+    fig.plot(
+        plate_boundaries,
+        pen="0.5p",
+    )
+
+    # AACSE map location
     fig.plot(
         data=[
             [aacse_map_region[0], aacse_map_region[2]],
@@ -43,6 +60,7 @@ def make_overview_map():
         pen="1p,red",
         straight_line="mp",
     )
+
     fig.savefig(os.path.join(figs_dir, "overview_map.pdf"))
 
 
