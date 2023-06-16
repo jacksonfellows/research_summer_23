@@ -15,6 +15,9 @@ def load_usgs_faults_for_region(region):
     )
 
 
+rupture_zones = geopandas.read_file("./traced_rupture_zones.gpkg")
+
+
 def make_overview_map():
     fig = pygmt.Figure()
     fig.coast(
@@ -44,6 +47,9 @@ def make_aacse_map():
 
     # faults
     fig.plot(load_usgs_faults_for_region(region), pen="0.02c", label="Mapped Fault")
+
+    # rupture zones
+    fig.plot(rupture_zones, pen="0.02c,4_4:4p", label="Historical Rupture Zones")
 
     # shots
     fig.plot(
