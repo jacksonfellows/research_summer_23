@@ -38,13 +38,9 @@ def make_overview_map():
 def make_aacse_map():
     fig = pygmt.Figure()
     region = (-165, -147, 51, 60)
-    fig.coast(
-        projection="M12c",
-        region=region,
-        shorelines=("1/0.5p", "2/0.5p"),
-        frame="a2f",
-        land="grey",
-    )
+
+    # set area
+    fig.basemap(projection="M12c", region=region, frame="a2f")
 
     # bathymetry & topography
     grid = pygmt.datasets.load_earth_relief(resolution="15s", region=region)
@@ -129,5 +125,9 @@ def make_aacse_map():
     # legend
     with pygmt.config(FONT="8"):
         fig.legend(position="JBR+jBR+o0.2c", box="+gwhite+p1p")
+
+    # scale
+    with pygmt.config(FONT="8"):
+        fig.basemap(map_scale="JBL+jBL+o0.5c/0.75+w100")
 
     fig.savefig(os.path.join(figs_dir, "aacse_map.pdf"))
