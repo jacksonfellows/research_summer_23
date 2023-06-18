@@ -164,3 +164,89 @@ def make_aacse_map():
         fig.basemap(map_scale="JBL+jBL+o0.5c/0.75+w100")
 
     fig.savefig(os.path.join(figs_dir, "aacse_map.pdf"))
+
+
+def make_aacse_mag_map():
+    fig = pygmt.Figure()
+
+    # set area
+    fig.basemap(projection="M12c", region=aacse_map_region, frame="a2f")
+
+    # magnetic
+    grid = pygmt.datasets.load_earth_magnetic_anomaly(
+        resolution="03m",
+        region=aacse_map_region,
+        data_source="wdmam",
+    )
+    fig.grdimage(grid=grid, cmap="mag")
+
+    # shorelines
+    fig.coast(region=aacse_map_region, shorelines="1/0.5p")
+
+    # faults
+    fig.plot(
+        load_usgs_faults_for_region(aacse_map_region), pen="0.02c", label="Mapped Fault"
+    )
+
+    # rupture zones
+    fig.plot(
+        rupture_zones,
+        pen="0.02c,4_4:4p",
+        fill="grey@50",
+        label="Historical Rupture Zone",
+    )
+
+    # shots
+    fig.plot(
+        x=utils._shot_df.lon,
+        y=utils._shot_df.lat,
+        style="c0.02c",
+        fill="purple",
+        label="Airgun Shot+S0.15c",
+    )
+
+    # volcanoes
+    fig.plot(
+        x=utils._volcanoes_df.lon,
+        y=utils._volcanoes_df.lat,
+        style="t0.2c",
+        fill="black",
+        label="Volcano",
+    )
+
+    # nodal stations
+    fig.plot(
+        x=utils._node_df.lon,
+        y=utils._node_df.lat,
+        style="c0.03c",
+        fill="red",
+        label="Nodal Station+S0.15c",
+    )
+
+    # broadband stations
+    fig.plot(
+        x=utils._broadband_df.lon,
+        y=utils._broadband_df.lat,
+        style="s0.2c",
+        fill="orange",
+        pen="black",
+        label="Broadband Station",
+    )
+
+    # magnetic scale
+    with pygmt.config(FONT="8"):
+        fig.colorbar(
+            cmap="mag",
+            frame=["a1000f1000", "x+lMagnetic Anomaly", "y+lnT"],
+            position="x0.5c/8c+w3.5c+h",
+        )
+
+    # legend
+    with pygmt.config(FONT="8"):
+        fig.legend(position="JBR+jBR+o0.2c", box="+gwhite+p1p")
+
+    # scale
+    with pygmt.config(FONT="8"):
+        fig.basemap(map_scale="JBL+jBL+o0.5c/0.75+w100")
+
+    fig.savefig(os.path.join(figs_dir, "aacse_mag_map.pdf"))
