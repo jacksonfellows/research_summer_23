@@ -27,6 +27,8 @@ plate_boundaries = geopandas.read_file("./tectonicplates-master/PB2002_boundarie
 
 aleut_lines = pd.read_csv("./aleut_lines.csv")
 
+edge_lines = geopandas.read_file("./traced_edge_transect.gpkg")
+
 
 def make_overview_map():
     fig = pygmt.Figure()
@@ -111,6 +113,9 @@ def make_aacse_map():
             fill=f"{zone_colors[row.rupture_name]}@50",
             label=f"{row.rupture_name} {zone_magnitudes[row.rupture_name]}",
         )
+
+    # EDGE lines
+    fig.plot(edge_lines, pen="0.02c,gold", label="EDGE Line")
 
     # ALEUT lines
     for i, row in aleut_lines.iterrows():

@@ -34,3 +34,5 @@ pytest -q --disable-warnings
 All other ruptures traced (and all rupture magnitudes taken) from Liu, C., Lay, T., & Xiong, X. (2022). The 29 July 2021 MW 8.2 Chignik, Alaska Peninsula Earthquake Rupture Inferred From Seismic and Geodetic Observations: Re-Rupture of the Western 2/3 of the 1938 Rupture Zone. Geophysical Research Letters, 49(4), e2021GL096004. https://doi.org/10.1029/2021GL096004
 
 Retrieved ALEUT lines from <https://www.marine-geo.org/tools/search/Events.php?event_set_uid=1329>.
+
+EDGE lines traced from Moore, J. C., Diebold, J., Fisher, M. A., Sample, J., Brocher, T., Talwani, M., et al. (1991). EDGE deep seismic reflection transect of the eastern Aleutian arc-trench layered lower crust reveals underplating and continental growth. Geology, 19(5), 420–424. <https://doi.org/10.1130/0091-7613(1991)019%3c0420:EDSRTO%3e2.3.CO%3b2>
