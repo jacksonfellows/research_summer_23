@@ -1,6 +1,7 @@
 import pygmt
 import os
 import geopandas
+import pandas as pd
 
 import utils
 
@@ -23,6 +24,8 @@ def load_rupture_zones():
 rupture_zones = load_rupture_zones()
 
 plate_boundaries = geopandas.read_file("./tectonicplates-master/PB2002_boundaries.shp")
+
+aleut_lines = pd.read_csv("./aleut_lines.csv")
 
 
 def make_overview_map():
@@ -107,6 +110,15 @@ def make_aacse_map():
             pen="0.02c,4_4:4p",
             fill=f"{zone_colors[row.rupture_name]}@50",
             label=f"{row.rupture_name} {zone_magnitudes[row.rupture_name]}",
+        )
+
+    # ALEUT lines
+    for i, row in aleut_lines.iterrows():
+        fig.plot(
+            x=(row.start_longitude, row.stop_longitude),
+            y=(row.start_latitude, row.stop_latitude),
+            pen="0.02c,green",
+            label="ALEUT Line" if i == 0 else None,
         )
 
     # shots
