@@ -250,58 +250,16 @@ def make_aacse_grav_map():
     fig.plot(
         rupture_zones,
         pen="0.02c,4_4:4p",
-        # fill="grey@50",
         label="Historical Rupture Zone",
     )
 
-    # shots
-    fig.plot(
-        x=utils._shot_df.lon,
-        y=utils._shot_df.lat,
-        style="c0.02c",
-        fill="purple",
-        label="Airgun Shot+S0.15c",
-    )
-
-    # volcanoes
-    fig.plot(
-        x=utils._volcanoes_df.lon,
-        y=utils._volcanoes_df.lat,
-        style="t0.2c",
-        fill="black",
-        label="Volcano",
-    )
-
-    # nodal stations
-    fig.plot(
-        x=utils._node_df.lon,
-        y=utils._node_df.lat,
-        style="c0.03c",
-        fill="red",
-        label="Nodal Station+S0.15c",
-    )
-
-    # broadband stations
-    fig.plot(
-        x=utils._broadband_df.lon,
-        y=utils._broadband_df.lat,
-        style="s0.2c",
-        fill="orange",
-        pen="black",
-        label="Broadband Station",
-    )
-
-    # magnetic scale
+    # gravity scale
     with pygmt.config(FONT="8"):
         fig.colorbar(
             cmap=True,
             frame=["a100f50", "x+lFree-Air Anomaly", "y+lmGal"],
             position="x0.5c/8c+w3.5c+h",
         )
-
-    # legend
-    with pygmt.config(FONT="8"):
-        fig.legend(position="JBR+jBR+o0.2c", box="+gwhite+p1p")
 
     # scale
     with pygmt.config(FONT="8"):
