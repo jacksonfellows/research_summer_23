@@ -263,8 +263,8 @@ def make_aacse_grav_map():
         resolution="01m",
         region=aacse_map_region,
     )
-    grav_cmap = "polar"
-    fig.grdimage(grid=grid, cmap=grav_cmap)
+    pygmt.makecpt(cmap="polar", series=(-275, 275))
+    fig.grdimage(grid=grid, cmap=True)
 
     # shorelines
     fig.coast(region=aacse_map_region, shorelines="1/0.5p")
@@ -322,8 +322,8 @@ def make_aacse_grav_map():
     # magnetic scale
     with pygmt.config(FONT="8"):
         fig.colorbar(
-            cmap=grav_cmap,
-            frame=["a0.5f0.25", "x+lFree-Air Anomaly", "y+lmGal"],
+            cmap=True,
+            frame=["a100f50", "x+lFree-Air Anomaly", "y+lmGal"],
             position="x0.5c/8c+w3.5c+h",
         )
 
