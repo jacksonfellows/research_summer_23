@@ -178,7 +178,8 @@ def make_aacse_mag_map():
         region=aacse_map_region,
         data_source="wdmam",
     )
-    fig.grdimage(grid=grid, cmap="mag")
+    pygmt.makecpt(cmap="mag", series=(-500, 500))
+    fig.grdimage(grid=grid, cmap=True)
 
     # shorelines
     fig.coast(region=aacse_map_region, shorelines="1/0.5p")
@@ -192,7 +193,6 @@ def make_aacse_mag_map():
     fig.plot(
         rupture_zones,
         pen="0.02c,4_4:4p",
-        fill="grey@50",
         label="Historical Rupture Zone",
     )
 
@@ -236,8 +236,8 @@ def make_aacse_mag_map():
     # magnetic scale
     with pygmt.config(FONT="8"):
         fig.colorbar(
-            cmap="mag",
-            frame=["a1000f1000", "x+lMagnetic Anomaly", "y+lnT"],
+            cmap=True,
+            frame=["a250f125", "x+lMagnetic Anomaly", "y+lnT"],
             position="x0.5c/8c+w3.5c+h",
         )
 
