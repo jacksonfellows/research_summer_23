@@ -22,12 +22,10 @@ def load_rupture_zones():
 
 
 rupture_zones = load_rupture_zones()
-
 plate_boundaries = geopandas.read_file("./tectonicplates-master/PB2002_boundaries.shp")
-
 aleut_lines = pd.read_csv("./aleut_lines.csv")
-
 edge_lines = geopandas.read_file("./traced_edge_transect.gpkg")
+avo_stations = pd.read_csv("./avo_lat_lon_elev.csv")
 
 
 def make_overview_map():
@@ -142,6 +140,16 @@ def make_aacse_map():
         style="t0.2c",
         fill="black",
         label="Volcano",
+    )
+
+    # AVO stations
+    fig.plot(
+        x=avo_stations.lon,
+        y=avo_stations.lat,
+        style="i0.2c",
+        pen="black",
+        fill="turquoise",
+        label="AVO Station",
     )
 
     # nodal stations
