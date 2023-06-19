@@ -12,6 +12,7 @@ dependencies:
  - geopandas=0.13
  - cartopy=0.21                 # need for obspy's built-in plotting
  - pytest=7.3
+ - geographiclib=2.0
 platforms:
  - osx-arm64                    # M1
  - win-64

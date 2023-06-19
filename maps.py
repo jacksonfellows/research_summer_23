@@ -4,6 +4,7 @@ import geopandas
 import pandas as pd
 
 import utils
+from velocity_model import model_start_lat_lon, model_end_lat_lon
 
 
 figs_dir = "figures"
@@ -136,7 +137,7 @@ def make_aacse_map():
         x=utils._shot_df.lon,
         y=utils._shot_df.lat,
         style="c0.02c",
-        fill="purple",
+        fill="red",
         label="Airgun Shot+S0.15c",
     )
 
@@ -164,7 +165,7 @@ def make_aacse_map():
         x=utils._node_df.lon,
         y=utils._node_df.lat,
         style="c0.03c",
-        fill="red",
+        fill="purple",
         label="Nodal Station+S0.15c",
     )
 
@@ -286,3 +287,42 @@ def make_aacse_grav_map():
         fig.basemap(map_scale="JBL+jBL+o0.5c/0.75+w100")
 
     fig.savefig(os.path.join(figs_dir, "aacse_grav_map.pdf"))
+
+
+def make_model_map():
+    fig = pygmt.Figure()
+    region = (-155, -150.75, 55.75, 58)
+
+    # set area
+    fig.basemap(projection="M12c", region=region, frame="a2f")
+
+    # bathymetry & topography
+    grid = pygmt.datasets.load_earth_relief(resolution="15s", region=region)
+    fig.grdimage(grid=grid, cmap="geo")
+
+    # nodal stations
+    fig.plot(
+        x=utils._node_df.lon,
+        y=utils._node_df.lat,
+        style="c0.06c",
+        fill="purple",
+        label="Nodal Station+S0.15c",
+    )
+
+    # shots
+    fig.plot(
+        x=utils._shot_df.lon,
+        y=utils._shot_df.lat,
+        style="c0.06c",
+        fill="red",
+        label="Airgun Shot+S0.15c",
+    )
+
+    # model line
+    fig.plot(
+        x=(model_start_lat_lon[1], model_end_lat_lon[1]),
+        y=(model_start_lat_lon[0], model_end_lat_lon[0]),
+        pen="0.06c,4_4:4p",
+    )
+
+    fig.savefig(os.path.join(figs_dir, "model_map.pdf"))
