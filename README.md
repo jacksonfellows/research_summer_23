@@ -36,3 +36,5 @@ All other ruptures traced (and all rupture magnitudes taken) from Liu, C., Lay, 
 Retrieved ALEUT lines from <https://www.marine-geo.org/tools/search/Events.php?event_set_uid=1329>.
 
 EDGE lines traced from Moore, J. C., Diebold, J., Fisher, M. A., Sample, J., Brocher, T., Talwani, M., et al. (1991). EDGE deep seismic reflection transect of the eastern Aleutian arc-trench layered lower crust reveals underplating and continental growth. Geology, 19(5), 420–424. <https://doi.org/10.1130/0091-7613(1991)019%3c0420:EDSRTO%3e2.3.CO%3b2>
+
+Slab depth contours downloaded from <https://www.sciencebase.gov/catalog/item/5aa2c535e4b0b1c392ea3ca2>.

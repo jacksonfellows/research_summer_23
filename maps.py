@@ -80,6 +80,13 @@ def make_aacse_map():
     grid = pygmt.datasets.load_earth_relief(resolution="15s", region=aacse_map_region)
     fig.grdimage(grid=grid, cmap="geo")
 
+    # slab contours
+    fig.plot(
+        "./alu_slab2_dep_02.23.18_contours.in",
+        pen="0.5p,pink",
+        label="Slab Depth 20 km Contours",
+    )
+
     # faults
     fig.plot(
         load_usgs_faults_for_region(aacse_map_region), pen="0.02c", label="Mapped Fault"
