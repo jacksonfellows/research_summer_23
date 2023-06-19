@@ -84,7 +84,7 @@ def make_aacse_map():
     fig.plot(
         "./alu_slab2_dep_02.23.18_contours.in",
         pen="0.5p,pink",
-        label="Slab Depth 20 km Contours",
+        label="Slab 20 km",
     )
 
     # faults
@@ -188,7 +188,7 @@ def make_aacse_map():
         )
 
     # legend
-    with pygmt.config(FONT="8"):
+    with pygmt.config(FONT="6"):
         fig.legend(position="JBR+jBR+o0.2c", box="+gwhite+p1p")
 
     # scale
