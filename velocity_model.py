@@ -85,9 +85,8 @@ class VelocityModel:
         plt.ylim(self.max_depth_km, self.min_depth_km)
 
         first_layer = min(self.layer_velocities.keys())
-        for layer_num, (xx, zz, vv) in self.layer_velocities.items():
-            # layer_num = 2
-            # xx, zz, vv = self.layer_velocities[layer_num]
+        for layer_num in sorted(self.layer_velocities.keys()):
+            xx, zz, vv = self.layer_velocities[layer_num]
             x1, z1 = (
                 (xx[:, 0], np.full(xx.shape[0], self.min_depth_km))
                 if layer_num == first_layer
