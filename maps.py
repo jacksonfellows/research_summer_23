@@ -300,6 +300,11 @@ def make_model_map():
     grid = pygmt.datasets.load_earth_relief(resolution="15s", region=region)
     fig.grdimage(grid=grid, cmap="geo")
 
+    # faults
+    fig.plot(
+        load_usgs_faults_for_region(aacse_map_region), pen="0.02c", label="Mapped Fault"
+    )
+
     # nodal stations
     fig.plot(
         x=utils._node_df.lon,
