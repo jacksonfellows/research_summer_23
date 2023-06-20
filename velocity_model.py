@@ -130,13 +130,6 @@ class VelocityModel:
         xx, zz = np.meshgrid(x, z, indexing="ij")
         self.layer_velocities[layer_num] = (xx, zz, v_f(xx, zz))
 
-    def add_layer(self, layer_num, xx, zz, vv):
-        """
-        Adds a layer with velocities vv defined on mesh xx, zz.
-        """
-        assert xx.shape == zz.shape == vv.shape
-        self.layer_velocities[layer_num] = (xx, zz, vv)
-
     def add_boundary_f(self, boundary_num, z_f, n_x_samples):
         """
         Adds a boundary with depth z_f(x) to the velocity model. Takes
