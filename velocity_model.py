@@ -118,6 +118,16 @@ class VelocityModel:
         plt.colorbar(label="v (km/s)")
         plt.show()
 
+    def plot_boundary(self, boundary_num):
+        """
+        Plot a single boundary.
+        """
+        plt.xlim(0, self.length_km)
+        plt.ylim(self.max_depth_km, self.min_depth_km)
+        x, z = self.boundary_depths[boundary_num]
+        plt.plot(x, z)
+        plt.show()
+
     def add_layer_f(self, layer_num, v_f, n_x_samples, n_z_samples):
         """
         Adds a layer with velocity v_f(x, z) to the velocity model.
