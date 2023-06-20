@@ -101,6 +101,23 @@ class VelocityModel:
         plt.colorbar(label="v (km/s)")
         plt.show()
 
+    def plot_layer(self, layer_num):
+        """
+        Plot a single layer.
+        """
+        plt.xlim(0, self.length_km)
+        plt.ylim(self.max_depth_km, self.min_depth_km)
+        plt.set_cmap("gist_rainbow")
+
+        xx, zz, vv = self.layer_velocities[layer_num]
+        plt.pcolormesh(xx, zz, vv, vmin=0, vmax=10)
+        # plt.plot(xx, zz, marker="x", color="k", linestyle="none")
+
+        plt.xlabel("x (km)")
+        plt.ylabel("z (km)")
+        plt.colorbar(label="v (km/s)")
+        plt.show()
+
     def add_layer_f(self, layer_num, v_f, n_x_samples, n_z_samples):
         """
         Adds a layer with velocity v_f(x, z) to the velocity model.
