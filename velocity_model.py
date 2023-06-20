@@ -83,6 +83,7 @@ class VelocityModel:
         """
         plt.xlim(0, self.length_km)
         plt.ylim(self.max_depth_km, self.min_depth_km)
+        plt.set_cmap("gist_rainbow")
 
         first_layer = min(self.layer_velocities.keys())
         for layer_num in sorted(self.layer_velocities.keys()):
@@ -111,6 +112,13 @@ class VelocityModel:
         z = np.linspace(self.min_depth_km, self.max_depth_km, n_z_samples)
         xx, zz = np.meshgrid(x, z, indexing="ij")
         self.layer_velocities[layer_num] = (xx, zz, v_f(xx, zz))
+
+    def add_layer(self, layer_num, xx, zz, vv):
+        """
+        Adds a layer with velocities vv defined on mesh xx, zz.
+        """
+        assert xx.shape == zz.shape == vv.shape
+        self.layer_velocities[layer_num] = (xx, zz, vv)
 
     def add_boundary_f(self, boundary_num, z_f, n_x_samples):
         """
@@ -177,9 +185,6 @@ def make_v_model():
     # Layer 1 is water with a constant v=1.5 km/s.
     vm.add_layer_f(1, lambda x, z: 1.5 + x * 0 + z * 0, x_samples, z_samples)
 
-    # Layer 2 is the crust.
-    vm.add_layer_f(2, lambda x, z: 4.0 + x * 0 + z, x_samples, z_samples)
-
     # Layer 3 is the mantle. I'll start by giving it a constant v=8.0 km/s.
     vm.add_layer_f(3, lambda x, z: 8.0 + x * 0 + z * 0, x_samples, z_samples)
 
@@ -190,15 +195,30 @@ def make_v_model():
         vm.end_lat_lon[0],
         vm.start_lat_lon[0],
     )
-    vm.add_boundary(
-        1,
-        *make_elev_boundary(
-            grid_region,
-            vm.start_lat_lon,
-            vm.end_lat_lon,
-            vm.length_km,
-            1 * vm.length_km,
+    elev_x, elev_z = make_elev_boundary(
+        grid_region,
+        vm.start_lat_lon,
+        vm.end_lat_lon,
+        vm.length_km,
+        1 * vm.length_km,
+    )
+
+    vm.add_boundary(1, elev_x, elev_z)
+
+    # Layer 2 is the crust.
+    vm.add_layer_f(
+        2,
+        lambda x, z: 2
+        + np.clip(
+            1
+            * np.sqrt(
+                (elev_x[:, np.newaxis] - x) ** 2 + (elev_z[:, np.newaxis] - z) ** 2
+            ),
+            0,
+            4,
         ),
+        1 * vm.length_km,
+        z_samples,
     )
 
     # Boundary 2 is the Moho (slab depth). I'll start by setting it to 10 km.
