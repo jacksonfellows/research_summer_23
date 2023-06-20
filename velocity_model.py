@@ -175,6 +175,19 @@ def make_elev_boundary(region, start_lat_lon, end_lat_lon, length_km, n_x_sample
     )
 
 
+def make_slab_boundary(region, start_lat_lon, end_lat_lon, length_km):
+    # Can't just set the samples -> that seems to break things.
+    df = pygmt.grdtrack(
+        grid="/Users/jackson/Downloads/Slab2_AComprehe/alu_slab2_dep_02.23.18.grd",
+        profile=f"{start_lat_lon[1]}/{start_lat_lon[0]}/{end_lat_lon[1]}/{end_lat_lon[0]}+l{length_km}k+d",
+    )
+    x = df[2].to_numpy()
+    z = df[3].to_numpy()
+    z = -z  # convert to depth
+    assert x.shape == z.shape
+    return x, z
+
+
 model_start_lat_lon = (57.953815, -152.717426)
 model_end_lat_lon = (55.910548, -151.01544)
 
@@ -186,19 +199,23 @@ def make_v_model():
         start_lat_lon=model_start_lat_lon,
         end_lat_lon=model_end_lat_lon,
         length_km=250,
-        min_depth_km=0,
+        min_depth_km=-2,
         max_depth_km=60,
     )
 
-    x_samples, z_samples = 10 * vm.length_km, 10 * (vm.max_depth_km - vm.min_depth_km)
+    length = vm.length_km
+    depth = vm.max_depth_km - vm.min_depth_km
 
-    # Layer 1 is water with a constant v=1.5 km/s.
-    vm.add_layer_f(1, lambda x, z: 1.5 + x * 0 + z * 0, x_samples, z_samples)
+    # Layer 1 is air with a constant v=0.3 km/s
+    vm.add_layer_f(1, lambda x, z: 0.3 + x * 0 + z * 0, 1 * length, 1 * depth)
 
-    # Layer 3 is the mantle. I'll start by giving it a constant v=8.0 km/s.
-    vm.add_layer_f(3, lambda x, z: 8.0 + x * 0 + z * 0, x_samples, z_samples)
+    # Boundary 1 is sea level
+    vm.add_boundary_f(1, lambda x: 0 + 0 * x, 1 * length)
 
-    # Boundary 1 is just elevation/bathymetry.
+    # Layer 2 is water with a constant v=1.5 km/s.
+    vm.add_layer_f(2, lambda x, z: 1.5 + x * 0 + z * 0, 1 * length, 1 * depth)
+
+    # Boundary 2 is elevation/bathymetry
     grid_region = (
         vm.start_lat_lon[1],
         vm.end_lat_lon[1],
@@ -210,28 +227,66 @@ def make_v_model():
         vm.start_lat_lon,
         vm.end_lat_lon,
         vm.length_km,
-        1 * vm.length_km,
+        1 * length,
     )
+    vm.add_boundary(2, elev_x, elev_z)
 
-    vm.add_boundary(1, elev_x, elev_z)
+    # Layer 3 is the crust.
+    start_sed_v = 2
+    final_sed_v = 5
+    sed_thickness = 2
+    start_crust_v = 5
+    final_crust_v = 7
+    crust_thickness = 8
 
-    # Layer 2 is the crust.
-    vm.add_layer_f(
-        2,
-        lambda x, z: 2
-        + np.clip(
-            1
-            * np.sqrt(
-                (elev_x[:, np.newaxis] - x) ** 2 + (elev_z[:, np.newaxis] - z) ** 2
+    def crust_v(x, z):
+        depth = z - elev_z[:, np.newaxis]
+        return np.clip(
+            np.where(
+                depth < 0,
+                start_sed_v,  # above the surface
+                np.where(
+                    depth < sed_thickness,
+                    # in sediment
+                    start_sed_v + (final_sed_v - start_sed_v) / sed_thickness * depth,
+                    # in crust
+                    start_crust_v
+                    + (final_crust_v - start_crust_v)
+                    / crust_thickness
+                    * (depth - sed_thickness),
+                ),
             ),
-            0,
-            4,
-        ),
-        1 * vm.length_km,
-        z_samples,
+            start_sed_v,
+            final_crust_v,
+        )
+
+    vm.add_layer_f(
+        3,
+        crust_v,
+        1 * length,
+        2 * depth,
     )
 
-    # Boundary 2 is the Moho (slab depth). I'll start by setting it to 10 km.
-    vm.add_boundary_f(2, lambda x: 10 + 0 * x, vm.length_km // 5)
+    # Boundary 3 is the Moho.
+    slab_x, slab_z = make_slab_boundary(
+        grid_region,
+        vm.start_lat_lon,
+        vm.end_lat_lon,
+        vm.length_km,
+    )
+    moho_x = slab_x
+    moho_z = slab_z + 8
+    undefined = np.isnan(moho_z)
+    moho_x_rest = moho_x[undefined]
+    last_z = moho_z[np.logical_not(undefined)][-1]
+    final_z = 15
+    final_x = moho_x[-1]
+    moho_z[undefined] = last_z + (final_z - last_z) / (final_x - moho_x_rest[0]) * (
+        moho_x_rest - moho_x_rest[0]
+    )
+    vm.add_boundary(3, moho_x, moho_z)
+
+    # Layer 4 is the mantle. I'll start by giving it a constant v=8.0 km/s.
+    vm.add_layer_f(4, lambda x, z: 8.0 + x * 0 + z * 0, 1 * length, 1 * depth)
 
     return vm
