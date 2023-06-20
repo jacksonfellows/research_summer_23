@@ -318,6 +318,16 @@ def make_model_map():
         label="Airgun Shot+S0.15c",
     )
 
+    # broadband stations
+    fig.plot(
+        x=utils._broadband_df.lon,
+        y=utils._broadband_df.lat,
+        style="s0.2c",
+        fill="orange",
+        pen="black",
+        label="Broadband Station",
+    )
+
     # model line
     fig.plot(
         x=(model_start_lat_lon[1], model_end_lat_lon[1]),
