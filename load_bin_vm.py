@@ -28,7 +28,8 @@ class VMTOMO_VM:
         x = np.linspace(self.x1, self.x2, self.nx)
         z = np.linspace(self.z1, self.z2, self.nz)
         xx, zz = np.meshgrid(x, z)
-        velocity_cmap = "plasma_r"
+        velocity_cmap = "gist_rainbow"
+        vert_exag = 2
         # Plot the layers.
         for layer_i in range(self.nr + 1):
             b = (
@@ -50,12 +51,14 @@ class VMTOMO_VM:
                 vmax=10,
                 extent=(self.x1, self.x2, self.z2, self.z1),
                 cmap=velocity_cmap,
+                aspect=vert_exag,
             )
         # Plot the boundaries.
         for boundary_i in range(self.nr):
             b = self.zrf[boundary_i * self.nx : (boundary_i + 1) * self.nx]
             plt.plot(x, b, color="k")
-        # Add axis labels
+        # Add title and axis labels
+        plt.title(f"Kodiak Cross-Section (Vertical Exaggeration = {vert_exag:0.1f}x)")
         plt.xlabel("Profile Distance (km)")
         plt.ylabel("Depth (km)")
         # Add scale bar
