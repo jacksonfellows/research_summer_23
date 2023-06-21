@@ -4,24 +4,17 @@ from matplotlib import pyplot as plt
 
 
 class VMTOMO_VM:
-    def __init__(self, filename):
-        with open(filename, "rb") as f:
-            # Assumes little-endian with 4-byte integers and 4-byte
-            # floats.
-            self.nx = struct.unpack("<i", f.read(4))[0]
-            self.nz = struct.unpack("<i", f.read(4))[0]
-            self.nr = struct.unpack("<i", f.read(4))[0]
-            self.x1 = struct.unpack("<f", f.read(4))[0]
-            self.x2 = struct.unpack("<f", f.read(4))[0]
-            self.z1 = struct.unpack("<f", f.read(4))[0]
-            self.z2 = struct.unpack("<f", f.read(4))[0]
-            zrf_n_bytes = self.nx * self.nr * 4
-            self.zrf = np.frombuffer(f.read(zrf_n_bytes), dtype="<f")
-            idr_n_bytes = zrf_n_bytes
-            self.idr = np.frombuffer(f.read(idr_n_bytes), dtype="<i")
-            nv = self.nx * self.nz
-            vel_n_bytes = nv * (self.nr + 1) * 4
-            self.vel = np.frombuffer(f.read(vel_n_bytes), dtype="<f")
+    def __init__(self, nx, nz, nr, x1, x2, z1, z2, zrf, idr, vel):
+        self.nx = nx
+        self.nz = nz
+        self.nr = nr
+        self.x1 = x1
+        self.x2 = x2
+        self.z1 = z1
+        self.z2 = z2
+        self.zrf = zrf
+        self.idr = idr
+        self.vel = vel
 
     def plot(self):
         x = np.linspace(self.x1, self.x2, self.nx)
@@ -76,3 +69,24 @@ class VMTOMO_VM:
         # Add scale bar
         plt.colorbar(im, location="bottom", shrink=0.7, label="Velocity (km/s)")
         plt.show()
+
+
+def load_vm_from_file(filename):
+    with open(filename, "rb") as f:
+        # Assumes little-endian with 4-byte integers and 4-byte
+        # floats.
+        nx = struct.unpack("<i", f.read(4))[0]
+        nz = struct.unpack("<i", f.read(4))[0]
+        nr = struct.unpack("<i", f.read(4))[0]
+        x1 = struct.unpack("<f", f.read(4))[0]
+        x2 = struct.unpack("<f", f.read(4))[0]
+        z1 = struct.unpack("<f", f.read(4))[0]
+        z2 = struct.unpack("<f", f.read(4))[0]
+        zrf_n_bytes = nx * nr * 4
+        zrf = np.frombuffer(f.read(zrf_n_bytes), dtype="<f")
+        idr_n_bytes = zrf_n_bytes
+        idr = np.frombuffer(f.read(idr_n_bytes), dtype="<i")
+        nv = nx * nz
+        vel_n_bytes = nv * (nr + 1) * 4
+        vel = np.frombuffer(f.read(vel_n_bytes), dtype="<f")
+        return VMTOMO_VM(nx, nz, nr, x1, x2, z1, z2, zrf, idr, vel)
