@@ -76,11 +76,12 @@ class VMTOMO_VM:
         if show:
             plt.show()
 
+    # load and dump assume little-endian with 4-byte integers and
+    # 4-byte floats.
+
     @classmethod
     def load(cls, filename):
         with open(filename, "rb") as f:
-            # Assumes little-endian with 4-byte integers and 4-byte
-            # floats.
             nx = struct.unpack("<i", f.read(4))[0]
             nz = struct.unpack("<i", f.read(4))[0]
             nr = struct.unpack("<i", f.read(4))[0]
@@ -96,6 +97,19 @@ class VMTOMO_VM:
             vel_n_bytes = nv * (nr + 1) * 4
             vel = np.frombuffer(f.read(vel_n_bytes), dtype="<f")
             return cls(nx, nz, nr, x1, x2, z1, z2, zrf, idr, vel)
+
+    def dump(self, filename):
+        with open(filename, "wb") as f:
+            f.write(struct.pack("<i", self.nx))
+            f.write(struct.pack("<i", self.nz))
+            f.write(struct.pack("<i", self.nr))
+            f.write(struct.pack("<f", self.x1))
+            f.write(struct.pack("<f", self.x2))
+            f.write(struct.pack("<f", self.z1))
+            f.write(struct.pack("<f", self.z2))
+            f.write(self.zrf.tobytes())
+            f.write(self.idr.tobytes())
+            f.write(self.vel.tobytes())
 
 
 def create_boundary_from_grid(grid, start_lat_lon, end_lat_lon, length_km, n_x_samples):
