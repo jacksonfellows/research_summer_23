@@ -204,7 +204,7 @@ def build_vm():
     final_sed_v = 5
     sed_thickness = 2
     start_crust_v = 5
-    final_crust_v = 7
+    final_crust_v = 7.1  # Add 0.1 so we see the contour.
     crust_thickness = 8
     depth = zz - elev_z
     vel[2] = np.clip(
