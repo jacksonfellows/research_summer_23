@@ -30,6 +30,9 @@ class VMTOMO_VM:
         xx, zz = np.meshgrid(x, z)
         velocity_cmap = "gist_rainbow"
         vert_exag = 2
+        contour_levels = np.linspace(0, 10, 21)
+        contour_levels_label = np.linspace(0, 10, 11)
+        im = None  # Needed for the colorbar.
         # Plot the layers.
         for layer_i in range(self.nr + 1):
             b = (
@@ -45,7 +48,7 @@ class VMTOMO_VM:
                 .T
             )
             vv_masked = np.ma.masked_array(vv, zz < b)
-            plt.imshow(
+            im = plt.imshow(
                 vv_masked,
                 vmin=0,
                 vmax=10,
@@ -53,6 +56,16 @@ class VMTOMO_VM:
                 cmap=velocity_cmap,
                 aspect=vert_exag,
             )
+            CS = plt.contour(
+                xx,
+                zz,
+                vv_masked,
+                levels=contour_levels,
+                colors="k",
+                linestyles="dashed",
+                linewidths=0.5,
+            )
+            plt.clabel(CS, inline=1, fontsize=8, levels=contour_levels_label)
         # Plot the boundaries.
         for boundary_i in range(self.nr):
             b = self.zrf[boundary_i * self.nx : (boundary_i + 1) * self.nx]
@@ -62,5 +75,5 @@ class VMTOMO_VM:
         plt.xlabel("Profile Distance (km)")
         plt.ylabel("Depth (km)")
         # Add scale bar
-        plt.colorbar(location="bottom", shrink=0.7, label="Velocity (km/s)")
+        plt.colorbar(im, location="bottom", shrink=0.7, label="Velocity (km/s)")
         plt.show()
