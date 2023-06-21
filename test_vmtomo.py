@@ -12,3 +12,8 @@ def test_load_test_01():
     assert vm.nx == 750
     assert vm.nz == 300
     assert vm.nr == 3
+
+
+def test_plot_test_01():
+    vm = vmtomo.load_vm_from_file("test_01.vm")
+    vm.plot(show=False)  # See if it runs without errors.

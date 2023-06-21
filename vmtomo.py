@@ -19,7 +19,7 @@ class VMTOMO_VM:
         assert vel.shape == (nx * nz * (nr + 1),)
         self.vel = vel
 
-    def plot(self):
+    def plot(self, show=True):
         x = np.linspace(self.x1, self.x2, self.nx)
         z = np.linspace(self.z1, self.z2, self.nz)
         xx, zz = np.meshgrid(x, z)
@@ -71,7 +71,8 @@ class VMTOMO_VM:
         plt.ylabel("Depth (km)")
         # Add scale bar
         plt.colorbar(im, location="bottom", shrink=0.7, label="Velocity (km/s)")
-        plt.show()
+        if show:
+            plt.show()
 
 
 def load_vm_from_file(filename):
