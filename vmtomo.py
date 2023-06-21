@@ -76,26 +76,26 @@ class VMTOMO_VM:
         if show:
             plt.show()
 
-
-def load_vm_from_file(filename):
-    with open(filename, "rb") as f:
-        # Assumes little-endian with 4-byte integers and 4-byte
-        # floats.
-        nx = struct.unpack("<i", f.read(4))[0]
-        nz = struct.unpack("<i", f.read(4))[0]
-        nr = struct.unpack("<i", f.read(4))[0]
-        x1 = struct.unpack("<f", f.read(4))[0]
-        x2 = struct.unpack("<f", f.read(4))[0]
-        z1 = struct.unpack("<f", f.read(4))[0]
-        z2 = struct.unpack("<f", f.read(4))[0]
-        zrf_n_bytes = nx * nr * 4
-        zrf = np.frombuffer(f.read(zrf_n_bytes), dtype="<f")
-        idr_n_bytes = zrf_n_bytes
-        idr = np.frombuffer(f.read(idr_n_bytes), dtype="<i")
-        nv = nx * nz
-        vel_n_bytes = nv * (nr + 1) * 4
-        vel = np.frombuffer(f.read(vel_n_bytes), dtype="<f")
-        return VMTOMO_VM(nx, nz, nr, x1, x2, z1, z2, zrf, idr, vel)
+    @classmethod
+    def load(cls, filename):
+        with open(filename, "rb") as f:
+            # Assumes little-endian with 4-byte integers and 4-byte
+            # floats.
+            nx = struct.unpack("<i", f.read(4))[0]
+            nz = struct.unpack("<i", f.read(4))[0]
+            nr = struct.unpack("<i", f.read(4))[0]
+            x1 = struct.unpack("<f", f.read(4))[0]
+            x2 = struct.unpack("<f", f.read(4))[0]
+            z1 = struct.unpack("<f", f.read(4))[0]
+            z2 = struct.unpack("<f", f.read(4))[0]
+            zrf_n_bytes = nx * nr * 4
+            zrf = np.frombuffer(f.read(zrf_n_bytes), dtype="<f")
+            idr_n_bytes = zrf_n_bytes
+            idr = np.frombuffer(f.read(idr_n_bytes), dtype="<i")
+            nv = nx * nz
+            vel_n_bytes = nv * (nr + 1) * 4
+            vel = np.frombuffer(f.read(vel_n_bytes), dtype="<f")
+            return cls(nx, nz, nr, x1, x2, z1, z2, zrf, idr, vel)
 
 
 def create_boundary_from_grid(grid, start_lat_lon, end_lat_lon, length_km, n_x_samples):

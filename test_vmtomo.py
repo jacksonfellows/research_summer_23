@@ -4,7 +4,7 @@ import vmtomo
 
 
 def test_load_test_01():
-    vm = vmtomo.load_vm_from_file("test_01.vm")
+    vm = vmtomo.VMTOMO_VM.load("test_01.vm")
     assert vm.x1 == 0.0
     assert vm.x2 == 250.0
     assert vm.z1 == -2.0
@@ -15,7 +15,7 @@ def test_load_test_01():
 
 
 def test_plot_test_01():
-    vm = vmtomo.load_vm_from_file("test_01.vm")
+    vm = vmtomo.VMTOMO_VM.load("test_01.vm")
     vm.plot(show=False)  # See if it runs without errors.
 
 
