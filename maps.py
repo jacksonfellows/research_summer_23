@@ -44,7 +44,8 @@ def make_overview_map():
 
     # bathymetry & topography
     grid = pygmt.datasets.load_earth_relief(resolution="01m", region=region)
-    fig.grdimage(grid=grid, cmap="geo")
+    pygmt.makecpt(cmap="geo", series=(-8000, 8000))
+    fig.grdimage(grid=grid, cmap=True)
 
     # plate boundaries
     fig.plot(
@@ -79,7 +80,8 @@ def make_aacse_map():
 
     # bathymetry & topography
     grid = pygmt.datasets.load_earth_relief(resolution="15s", region=aacse_map_region)
-    fig.grdimage(grid=grid, cmap="geo")
+    pygmt.makecpt(cmap="geo", series=(-8000, 8000))
+    fig.grdimage(grid=grid, cmap=True)
 
     # slab contours
     fig.plot(
@@ -298,7 +300,8 @@ def make_model_map():
 
     # bathymetry & topography
     grid = pygmt.datasets.load_earth_relief(resolution="15s", region=region)
-    fig.grdimage(grid=grid, cmap="geo")
+    pygmt.makecpt(cmap="geo", series=(-8000, 8000))
+    fig.grdimage(grid=grid, cmap=True)
 
     # faults
     fig.plot(
