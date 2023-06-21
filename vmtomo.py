@@ -1,7 +1,6 @@
 import numpy as np
 import struct
 from matplotlib import pyplot as plt
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
 class VMTOMO_VM:
