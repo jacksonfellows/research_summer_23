@@ -130,7 +130,7 @@ def make_elev_boundary(region, start_lat_lon, end_lat_lon, length_km, n_x_sample
 def make_slab_boundary(region, start_lat_lon, end_lat_lon, length_km, n_x_samples):
     sample_interval_km = length_km / (n_x_samples + 1)
     df = pygmt.grdtrack(
-        grid="/Users/jackson/Downloads/Slab2_AComprehe/alu_slab2_dep_02.23.18.grd",
+        grid="./alu_slab2_dep_02.23.18.grd",
         profile=f"{start_lat_lon[1]}/{start_lat_lon[0]}/{end_lat_lon[1]}/{end_lat_lon[0]}+l{length_km}k+i{sample_interval_km}+d",
     )
     z = df[3].to_numpy()
