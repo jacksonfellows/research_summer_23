@@ -155,6 +155,21 @@ class VelocityModel:
         assert x.shape == z.shape
         self.boundary_depths[boundary_num] = (x, z)
 
+    def export_velocities(self, filename):
+        with open(filename, "w") as f:
+            for layer_num in sorted(self.layer_velocities.keys()):
+                xx, zz, vv = self.layer_velocities[layer_num]
+                # Is there a better numpy was to do this?
+                for x, z, v in zip(xx.flat, zz.flat, vv.flat):
+                    f.write(f"{layer_num} {x:0.2f} {z:0.2f} {v:0.2f}\n")
+
+    def export_boundaries(self, filename):
+        with open(filename, "w") as f:
+            for boundary_num in sorted(self.boundary_depths.keys()):
+                xx, zz = self.boundary_depths[boundary_num]
+                for x, z in zip(xx.flat, zz.flat):
+                    f.write(f"{boundary_num} {boundary_num} {x:0.2f} {z:0.2f}\n")
+
 
 def create_boundary_from_grid(grid, start_lat_lon, end_lat_lon, length_km, n_x_samples):
     """
@@ -217,13 +232,13 @@ def make_v_model():
     depth = vm.max_depth_km - vm.min_depth_km
 
     # Layer 1 is air with a constant v=0.3 km/s
-    vm.add_layer_f(1, lambda x, z: 0.3 + x * 0 + z * 0, 1 * length, 1 * depth)
+    vm.add_layer_f(1, lambda x, z: 0.3 + x * 0 + z * 0, 4, 3)
 
     # Boundary 1 is sea level
-    vm.add_boundary_f(1, lambda x: 0 + 0 * x, 1 * length)
+    vm.add_boundary_f(1, lambda x: 0 + 0 * x, 4)
 
     # Layer 2 is water with a constant v=1.5 km/s.
-    vm.add_layer_f(2, lambda x, z: 1.5 + x * 0 + z * 0, 1 * length, 1 * depth)
+    vm.add_layer_f(2, lambda x, z: 1.5 + x * 0 + z * 0, 4, 3)
 
     # Boundary 2 is elevation/bathymetry
     grid_region = (
@@ -274,7 +289,7 @@ def make_v_model():
         3,
         crust_v,
         1 * length,
-        2 * depth,
+        depth // 5,
     )
 
     # Boundary 3 is the Moho.
@@ -297,6 +312,6 @@ def make_v_model():
     vm.add_boundary(3, moho_x, moho_z)
 
     # Layer 4 is the mantle. I'll start by giving it a constant v=8.0 km/s.
-    vm.add_layer_f(4, lambda x, z: 8.0 + x * 0 + z * 0, 1 * length, 1 * depth)
+    vm.add_layer_f(4, lambda x, z: 8.0 + x * 0 + z * 0, 4, 3)
 
     return vm
