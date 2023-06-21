@@ -12,8 +12,11 @@ class VMTOMO_VM:
         self.x2 = x2
         self.z1 = z1
         self.z2 = z2
+        assert zrf.shape == (nx * nr,)
         self.zrf = zrf
+        assert idr.shape == (nx * nr,)
         self.idr = idr
+        assert vel.shape == (nx * nz * (nr + 1),)
         self.vel = vel
 
     def plot(self):
