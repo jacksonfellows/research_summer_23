@@ -17,3 +17,8 @@ def test_load_test_01():
 def test_plot_test_01():
     vm = vmtomo.load_vm_from_file("test_01.vm")
     vm.plot(show=False)  # See if it runs without errors.
+
+
+def test_build_vm():
+    vm = vmtomo.build_vm()
+    vm.plot(show=False)
