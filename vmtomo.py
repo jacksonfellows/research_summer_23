@@ -252,12 +252,12 @@ def build_vm():
 trev = lambda x: tuple(reversed(x))
 
 
-def project_nodes_to_line(start_lat_lon, end_lat_lon, node_nos):
+def project_nodes_to_line(start_lat_lon, end_lat_lon, node_codes):
     """
     Helper function to project nodes to line. Returns arrays x, z in
     the model space.
     """
-    df = utils._node_df[utils._node_df.code.isin(node_nos)]
+    df = utils._node_df[utils._node_df.code.isin(node_codes)]
     node_locs = np.column_stack((df.lon, df.lat, df.elev_m))
     projected = pygmt.project(
         data=node_locs,
@@ -271,24 +271,51 @@ def project_nodes_to_line(start_lat_lon, end_lat_lon, node_nos):
     return x, z
 
 
+def project_shots_to_line(start_lat_lon, end_lat_lon, shot_nos):
+    """
+    Helper function to project shots to line. Returns arrays x, z in
+    the model space.
+    """
+    df = utils._shot_df[utils._shot_df.shotno.isin(shot_nos)]
+    node_locs = np.column_stack((df.lon, df.lat))
+    projected = pygmt.project(
+        data=node_locs,
+        center=trev(start_lat_lon),
+        endpoint=trev(end_lat_lon),
+        unit=True,
+    )
+    x = projected[2].to_numpy()
+    z = np.zeros(x.shape)  # All shots happen at sea level.
+    return x, z
+
+
 class Profile:  # Could have a better name.
     """
     A study profile. Stores the associated velocity model and
     metadata.
     """
 
-    def __init__(self, name, start_lat_lon, end_lat_lon, vm, node_nos=None):
+    def __init__(
+        self, name, start_lat_lon, end_lat_lon, vm, node_codes=None, shot_nos=None
+    ):
         self.name = name
         self.start_lat_lon = start_lat_lon
         self.end_lat_lon = end_lat_lon
         self.vm = vm
         # Nodes
-        if node_nos is not None:
+        if node_codes is not None:
             self.node_x, self.node_z = project_nodes_to_line(
-                start_lat_lon, end_lat_lon, node_nos
+                start_lat_lon, end_lat_lon, node_codes
             )
         else:
             self.node_x, self.node_z = np.zeros(0), np.zeros(0)
+        # Shots
+        if shot_nos is not None:
+            self.shot_x, self.shot_z = project_shots_to_line(
+                start_lat_lon, end_lat_lon, shot_nos
+            )
+        else:
+            self.shot_x, shot.shot_z = np.zeros(0), np.zeros(0)
 
     def plot(self):
         plt.suptitle(self.name)
@@ -299,6 +326,14 @@ class Profile:  # Could have a better name.
             "o",
             color="purple",
             label="Nodal Station",
+            markersize=4.0,
+        )
+        plt.plot(
+            self.shot_x,
+            self.shot_z,
+            "x",
+            color="white",
+            label="Airgun Shot",
             markersize=4.0,
         )
         plt.legend()
