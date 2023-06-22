@@ -10,6 +10,7 @@ profile_1 = {
     "x2": 250,
     "z1": -2,
     "z2": 60,
+    "name": "Kodiak Profile 1",
 }
 
 profile_2 = {
@@ -22,4 +23,5 @@ profile_2 = {
     "x2": 350,
     "z1": -2,
     "z2": 84,  # Same ratio of length/depth as profile 1.
+    "name": "Kodiak Profile 2",
 }

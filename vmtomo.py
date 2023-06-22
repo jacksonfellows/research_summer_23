@@ -420,3 +420,21 @@ class Profile:  # Could have a better name.
         )
         plt.legend()
         plt.show()
+
+
+# Helper for interactive use
+def make_profile(pinfo):
+    build_vm_keys = [
+        "start_lat_lon",
+        "end_lat_lon",
+        "nx",
+        "nz",
+        "nr",
+        "x1",
+        "x2",
+        "z1",
+        "z2",
+    ]
+    vm = build_vm(**{k: pinfo[k] for k in build_vm_keys})
+    p = Profile(pinfo["name"], pinfo["start_lat_lon"], pinfo["end_lat_lon"], vm)
+    return p
