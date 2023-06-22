@@ -282,17 +282,6 @@ def find_earthquakes(min_lat, max_lat, min_lon, max_lon, min_mag=0):
     return locs_masked
 
 
-@functools.cache
-def find_earthquakes_along_profile(start_lat_lon, end_lat_lon, min_mag=0):
-    min_lat = min(start_lat_lon[0], end_lat_lon[0])
-    max_lat = max(start_lat_lon[0], end_lat_lon[0])
-    min_lon = min(start_lat_lon[1], end_lat_lon[1])
-    max_lon = max(start_lat_lon[1], end_lat_lon[1])
-    return find_earthquakes(
-        min_lat - 0.5, max_lat + 0.5, min_lon - 0.5, max_lon + 0.5, min_mag=min_mag
-    )
-
-
 class Profile:  # Could have a better name.
     """
     A study profile. Stores the associated velocity model and
@@ -379,6 +368,15 @@ class Profile:  # Could have a better name.
             & (np.abs(dist_from_profile) < max_dist_from_profile_km)
         )
         return np.column_stack((x[valid], z[valid], mag[valid]))
+
+    def find_earthquakes_along_profile(self, min_mag=0):
+        min_lat = min(self.start_lat_lon[0], self.end_lat_lon[0])
+        max_lat = max(self.start_lat_lon[0], self.end_lat_lon[0])
+        min_lon = min(self.start_lat_lon[1], self.end_lat_lon[1])
+        max_lon = max(self.start_lat_lon[1], self.end_lat_lon[1])
+        return find_earthquakes(
+            min_lat - 0.5, max_lat + 0.5, min_lon - 0.5, max_lon + 0.5, min_mag=min_mag
+        )
 
     def plot(self, projected_earthquakes=None):
         plt.suptitle(self.name)
