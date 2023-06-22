@@ -3,6 +3,7 @@ import struct
 from matplotlib import pyplot as plt
 import pygmt
 import functools
+import utils
 
 
 class VMTOMO_VM:
@@ -68,7 +69,7 @@ class VMTOMO_VM:
             b = self.zrf[boundary_i * self.nx : (boundary_i + 1) * self.nx]
             plt.plot(x, b, color="k")
         # Add title and axis labels
-        plt.title(f"Kodiak Cross-Section (Vertical Exaggeration = {vert_exag:0.1f}x)")
+        plt.title(f"Vertical Exaggeration = {vert_exag:0.1f}x")
         plt.xlabel("Profile Distance (km)")
         plt.ylabel("Depth (km)")
         # Add scale bar
@@ -246,3 +247,59 @@ def build_vm():
     return VMTOMO_VM(
         nx, nz, nr, x1, x2, z1, z2, zrf.flatten(), idr.flatten(), vel.flatten()
     )
+
+
+trev = lambda x: tuple(reversed(x))
+
+
+def project_nodes_to_line(start_lat_lon, end_lat_lon, node_nos):
+    """
+    Helper function to project nodes to line. Returns arrays x, z in
+    the model space.
+    """
+    df = utils._node_df[utils._node_df.code.isin(node_nos)]
+    node_locs = np.column_stack((df.lon, df.lat, df.elev_m))
+    projected = pygmt.project(
+        data=node_locs,
+        center=trev(start_lat_lon),
+        endpoint=trev(end_lat_lon),
+        unit=True,
+    )
+    x = projected[3].to_numpy()
+    z = projected[2].to_numpy()
+    z = -1e-3 * z  # Convert z from m of elevation to km of depth.
+    return x, z
+
+
+class Profile:  # Could have a better name.
+    """
+    A study profile. Stores the associated velocity model and
+    metadata.
+    """
+
+    def __init__(self, name, start_lat_lon, end_lat_lon, vm, node_nos=None):
+        self.name = name
+        self.start_lat_lon = start_lat_lon
+        self.end_lat_lon = end_lat_lon
+        self.vm = vm
+        # Nodes
+        if node_nos is not None:
+            self.node_x, self.node_z = project_nodes_to_line(
+                start_lat_lon, end_lat_lon, node_nos
+            )
+        else:
+            self.node_x, self.node_z = np.zeros(0), np.zeros(0)
+
+    def plot(self):
+        plt.suptitle(self.name)
+        self.vm.plot(show=False)
+        plt.plot(
+            self.node_x,
+            self.node_z,
+            "o",
+            color="purple",
+            label="Nodal Station",
+            markersize=4.0,
+        )
+        plt.legend()
+        plt.show()
