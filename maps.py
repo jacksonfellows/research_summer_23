@@ -4,7 +4,7 @@ import geopandas
 import pandas as pd
 
 import utils
-from profile_info import profile_1
+import profile_info
 
 
 figs_dir = "figures"
@@ -293,10 +293,10 @@ def make_aacse_grav_map():
 
 def make_model_map():
     fig = pygmt.Figure()
-    region = (-155, -150.75, 55.75, 58)
+    region = (-155, -150.75, 54.5, 58.5)
 
     # set area
-    fig.basemap(projection="M12c", region=region, frame="a2f")
+    fig.basemap(projection="M12c", region=region, frame="a1f")
 
     # bathymetry & topography
     grid = pygmt.datasets.load_earth_relief(resolution="15s", region=region)
@@ -335,12 +335,18 @@ def make_model_map():
         pen="black",
         label="Broadband Station",
     )
-
-    # model line
-    fig.plot(
-        x=(profile_1["start_lat_lon"][1], profile_1["end_lat_lon"][1]),
-        y=(profile_1["start_lat_lon"][0], profile_1["end_lat_lon"][0]),
-        pen="0.06c,4_4:4p",
+    fig.text(
+        x=utils._broadband_df.lon,
+        y=utils._broadband_df.lat,
+        text=utils._broadband_df.code,
     )
+
+    # profile lines
+    for profile in (profile_info.profile_1, profile_info.profile_2):
+        fig.plot(
+            x=(profile["start_lat_lon"][1], profile["end_lat_lon"][1]),
+            y=(profile["start_lat_lon"][0], profile["end_lat_lon"][0]),
+            pen="0.06c,4_4:4p",
+        )
 
     fig.savefig(os.path.join(figs_dir, "model_map.pdf"))

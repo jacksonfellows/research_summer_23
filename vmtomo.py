@@ -7,7 +7,7 @@ from obspy.clients.fdsn.client import Client
 
 
 import utils
-from profile_info import profile_1
+import profile_info
 
 
 class VMTOMO_VM:

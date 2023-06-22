@@ -9,7 +9,7 @@ trev = lambda x: tuple(reversed(x))
 
 
 # This is what found the start and end points for profile 1.
-def make_model_space():
+def make_model_space_profile_1():
     # Let's make the model space by drawing a line from the first shot
     # of line 1 to the last shot of line 1. Note that GMT expects
     # lon,lat ordering (i.e. x,y).
@@ -31,6 +31,40 @@ def make_model_space():
     round_to_nearest_km = 50
     max_dist_km = (
         np.ceil(projected[3].max() / round_to_nearest_km) * round_to_nearest_km
+    )
+    print(f"chosen round max distance of {max_dist_km}")
+    # geographiclib wants lat,lon
+    start_point_dict = Geodesic.WGS84.InverseLine(
+        *trev(line_start), *trev(line_end)
+    ).Position(max_dist_km * 1e3)
+    # Round to same precision as shot location.
+    start_point = (
+        np.round(start_point_dict["lat2"], decimals=6),
+        np.round(start_point_dict["lon2"], decimals=6),
+    )
+    end_point = trev(line_start)
+    print(f"the overall line will be from {start_point} to {end_point}")
+    print(
+        f"sanity check (should be {max_dist_km}): {Geodesic.WGS84.InverseLine(*start_point, *end_point).s13 * 1e-3}"
+    )
+
+
+def make_model_space(first_shot, last_shot, station_locs, flip=False):
+    # Note that GMT expects lon,lat ordering (i.e. x,y).
+    # pointing towards Kodiak
+    line_start = trev(utils.shot_lat_lon(last_shot))
+    line_end = trev(utils.shot_lat_lon(first_shot))
+    print(line_start, line_end)
+    projected = pygmt.project(
+        data=station_locs, center=line_start, endpoint=line_end, unit=True
+    )
+    distances_along_line = projected[2]
+    print(
+        f"distance from node to farthest shot: closest={distances_along_line.min():0.2f} km, farthest={distances_along_line.max():0.2f} km"
+    )
+    round_to_nearest_km = 50
+    max_dist_km = (
+        np.ceil(distances_along_line.max() / round_to_nearest_km) * round_to_nearest_km
     )
     print(f"chosen round max distance of {max_dist_km}")
     # geographiclib wants lat,lon
