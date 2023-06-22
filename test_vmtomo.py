@@ -1,4 +1,5 @@
 import vmtomo
+import profile_info
 
 # Make sure we can load test_01.vm.
 
@@ -19,6 +20,6 @@ def test_plot_test_01():
     vm.plot(show=False)  # See if it runs without errors.
 
 
-def test_build_vm():
-    vm = vmtomo.build_vm()
-    vm.plot(show=False)
+def test_build_profile():
+    p1 = vmtomo.make_profile(profile_info.profile_1)
+    p1.plot(show=False)

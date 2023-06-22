@@ -378,7 +378,7 @@ class Profile:  # Could have a better name.
             min_lat - 0.5, max_lat + 0.5, min_lon - 0.5, max_lon + 0.5, min_mag=min_mag
         )
 
-    def plot(self, earthquake_max_dist_km=None):
+    def plot(self, earthquake_max_dist_km=None, show=False):
         plt.suptitle(self.name)
         self.vm.plot(show=False)
         # Earthquakes. I think it makes sense to not store them with
@@ -420,7 +420,8 @@ class Profile:  # Could have a better name.
             markersize=4.0,
         )
         plt.legend(loc="lower right")
-        plt.show()
+        if show:
+            plt.show()
 
 
 # Helper for interactive use
