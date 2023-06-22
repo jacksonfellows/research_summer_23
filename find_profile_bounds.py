@@ -1,16 +1,14 @@
 import numpy as np
 import pygmt
-from matplotlib import pyplot as plt
 from geographiclib.geodesic import Geodesic
 import pygmt
-import scipy
-import functools
 
 import utils
 
 trev = lambda x: tuple(reversed(x))
 
 
+# This is what found the start and end points for profile 1.
 def make_model_space():
     # Let's make the model space by drawing a line from the first shot
     # of line 1 to the last shot of line 1. Note that GMT expects
