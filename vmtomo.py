@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 import pygmt
 import functools
 import utils
+from obspy.clients.fdsn.client import Client
 
 
 class VMTOMO_VM:
@@ -252,41 +253,37 @@ def build_vm():
 trev = lambda x: tuple(reversed(x))
 
 
-def project_nodes_to_line(start_lat_lon, end_lat_lon, node_codes):
+@functools.cache
+def find_earthquakes(min_lat, max_lat, min_lon, max_lon, min_mag=0):
     """
-    Helper function to project nodes to line. Returns arrays x, z in
-    the model space.
+    Finds earthquake events within the given bounds. Returns a 2d
+    array with lon, lat, z, mag as columns. z will be depth in km.
     """
-    df = utils._node_df[utils._node_df.code.isin(node_codes)]
-    node_locs = np.column_stack((df.lon, df.lat, df.elev_m))
-    projected = pygmt.project(
-        data=node_locs,
-        center=trev(start_lat_lon),
-        endpoint=trev(end_lat_lon),
-        unit=True,
+    client = Client("IRIS")
+    cat = client.get_events(
+        minlatitude=min_lat,
+        maxlatitude=max_lat,
+        minlongitude=min_lon,
+        maxlongitude=max_lon,
+        minmagnitude=min_mag,
     )
-    x = projected[3].to_numpy()
-    z = projected[2].to_numpy()
-    z = -1e-3 * z  # Convert z from m of elevation to km of depth.
-    return x, z
-
-
-def project_shots_to_line(start_lat_lon, end_lat_lon, shot_nos):
-    """
-    Helper function to project shots to line. Returns arrays x, z in
-    the model space.
-    """
-    df = utils._shot_df[utils._shot_df.shotno.isin(shot_nos)]
-    node_locs = np.column_stack((df.lon, df.lat))
-    projected = pygmt.project(
-        data=node_locs,
-        center=trev(start_lat_lon),
-        endpoint=trev(end_lat_lon),
-        unit=True,
-    )
-    x = projected[2].to_numpy()
-    z = np.zeros(x.shape)  # All shots happen at sea level.
-    return x, z
+    locs = np.zeros((len(cat.events), 4))
+    for i, event in enumerate(cat.events):
+        origin = event.preferred_origin()
+        if (
+            origin.longitude is None
+            or origin.latitude is None
+            or origin.depth is None
+            or event.preferred_magnitude().mag is None
+        ):
+            locs[i] = np.nan
+        else:
+            locs[i][0] = origin.longitude
+            locs[i][1] = origin.latitude
+            locs[i][2] = 1e-3 * origin.depth
+            locs[i][3] = event.preferred_magnitude().mag
+    locs_masked = np.ma.masked_array(locs, np.isnan(locs))
+    return locs_masked
 
 
 class Profile:  # Could have a better name.
@@ -302,24 +299,101 @@ class Profile:  # Could have a better name.
         self.start_lat_lon = start_lat_lon
         self.end_lat_lon = end_lat_lon
         self.vm = vm
+        # Set some helper variables from vm
+        self.x1, self.x2, self.z1, self.z2 = vm.x1, vm.x2, vm.z1, vm.z2
         # Nodes
         if node_codes is not None:
-            self.node_x, self.node_z = project_nodes_to_line(
-                start_lat_lon, end_lat_lon, node_codes
-            )
+            self.node_x, self.node_z = self.project_nodes(node_codes)
         else:
             self.node_x, self.node_z = np.zeros(0), np.zeros(0)
         # Shots
         if shot_nos is not None:
-            self.shot_x, self.shot_z = project_shots_to_line(
-                start_lat_lon, end_lat_lon, shot_nos
-            )
+            self.shot_x, self.shot_z = self.project_shots(shot_nos)
         else:
-            self.shot_x, shot.shot_z = np.zeros(0), np.zeros(0)
+            self.shot_x, self.shot_z = np.zeros(0), np.zeros(0)
 
-    def plot(self):
+    def project_nodes(self, node_codes):
+        """
+        Helper function to project nodes to profile. Returns arrays x, z in
+        the model space.
+        """
+        df = utils._node_df[utils._node_df.code.isin(node_codes)]
+        node_locs = np.column_stack((df.lon, df.lat, df.elev_m))
+        projected = pygmt.project(
+            data=node_locs,
+            center=trev(self.start_lat_lon),
+            endpoint=trev(self.end_lat_lon),
+            unit=True,
+        )
+        x = projected[3].to_numpy()
+        z = projected[2].to_numpy()
+        z = -1e-3 * z  # Convert z from m of elevation to km of depth.
+        return x, z
+
+    def project_shots(self, shot_nos):
+        """
+        Helper function to project shots to profile. Returns arrays x, z in
+        the model space.
+        """
+        df = utils._shot_df[utils._shot_df.shotno.isin(shot_nos)]
+        node_locs = np.column_stack((df.lon, df.lat))
+        projected = pygmt.project(
+            data=node_locs,
+            center=trev(self.start_lat_lon),
+            endpoint=trev(self.end_lat_lon),
+            unit=True,
+        )
+        x = projected[2].to_numpy()
+        z = np.zeros(x.shape)  # All shots happen at sea level.
+        return x, z
+
+    def project_earthquakes(self, earthquake_locs, max_dist_from_profile_km):
+        """
+        Projects an array of earthquake lon, lat, z, mag to profile.
+        Returns arrays x, z, mag in the model space.
+        """
+        projected = pygmt.project(
+            data=earthquake_locs,
+            center=trev(self.start_lat_lon),
+            endpoint=trev(self.end_lat_lon),
+            unit=True,
+        )
+        x = projected[4]
+        dist_from_profile = projected[5]
+        z = projected[2].to_numpy()
+        mag = projected[3].to_numpy()
+        assert x.shape == z.shape == mag.shape == dist_from_profile.shape
+        # Only return events that are in the profile
+        valid = (
+            (self.x1 < x)
+            & (x < self.x2)
+            & (self.z1 < z)
+            & (z < self.z2)
+            & (np.abs(dist_from_profile) < max_dist_from_profile_km)
+        )
+        return np.column_stack((x[valid], z[valid], mag[valid]))
+
+    def plot(self, projected_earthquakes=None):
         plt.suptitle(self.name)
         self.vm.plot(show=False)
+        # Earthquakes. I think it makes sense to not store them with
+        # the profile since we'll only need them for plotting.
+        if projected_earthquakes is not None:
+            quake_x, quake_z, quake_mag = (
+                projected_earthquakes[:, 0],
+                projected_earthquakes[:, 1],
+                projected_earthquakes[:, 2],
+            )
+            quake_s = (10 * quake_mag / quake_mag.max()) ** 2
+            plt.scatter(
+                quake_x,
+                quake_z,
+                quake_s,
+                facecolors="none",
+                edgecolors="white",
+                label="Earthquake",
+            )
+        # Nodes
         plt.plot(
             self.node_x,
             self.node_z,
@@ -328,11 +402,12 @@ class Profile:  # Could have a better name.
             label="Nodal Station",
             markersize=4.0,
         )
+        # Shots
         plt.plot(
             self.shot_x,
             self.shot_z,
             "x",
-            color="white",
+            color="blue",
             label="Airgun Shot",
             markersize=4.0,
         )
