@@ -4,7 +4,7 @@ import geopandas
 import pandas as pd
 
 import utils
-from velocity_model import model_start_lat_lon, model_end_lat_lon
+from profile_info import profile_1
 
 
 figs_dir = "figures"
@@ -338,8 +338,8 @@ def make_model_map():
 
     # model line
     fig.plot(
-        x=(model_start_lat_lon[1], model_end_lat_lon[1]),
-        y=(model_start_lat_lon[0], model_end_lat_lon[0]),
+        x=(profile_1["start_lat_lon"][1], profile_1["end_lat_lon"][1]),
+        y=(profile_1["start_lat_lon"][0], profile_1["end_lat_lon"][0]),
         pen="0.06c,4_4:4p",
     )
 

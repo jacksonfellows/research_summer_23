@@ -49,7 +49,3 @@ def make_model_space():
     print(
         f"sanity check (should be {max_dist_km}): {Geodesic.WGS84.InverseLine(*start_point, *end_point).s13 * 1e-3}"
     )
-
-
-model_start_lat_lon = (57.953815, -152.717426)
-model_end_lat_lon = (55.910548, -151.01544)

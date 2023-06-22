@@ -3,8 +3,11 @@ import struct
 from matplotlib import pyplot as plt
 import pygmt
 import functools
-import utils
 from obspy.clients.fdsn.client import Client
+
+
+import utils
+from profile_info import profile_1
 
 
 class VMTOMO_VM:
@@ -155,10 +158,8 @@ def make_slab_boundary(region, start_lat_lon, end_lat_lon, length_km, n_x_sample
     return z
 
 
-def build_vm():
+def build_vm(start_lat_lon, end_lat_lon, nx, nz, nr, x1, x2, z1, z2):
     # Model location.
-    start_lat_lon = (57.953815, -152.717426)
-    end_lat_lon = (55.910548, -151.01544)
     region = (
         start_lat_lon[1],
         end_lat_lon[1],
@@ -167,11 +168,6 @@ def build_vm():
     )
 
     # Velocity model info.
-    x1, x2 = 0, 250
-    z1, z2 = -2, 60
-    nx = 4 * (x2 - x1)
-    nz = 8 * (z2 - z1)
-    nr = 3  # Number of boundaries.
     zrf = np.zeros((nr, nx), dtype="f")
     idr = np.zeros((nr, nx), dtype="i")
     vel = np.zeros((nr + 1, nx, nz), dtype="f")
