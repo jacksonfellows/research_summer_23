@@ -416,7 +416,7 @@ class Profile:  # Could have a better name.
             label="Airgun Shot",
             markersize=4.0,
         )
-        plt.legend()
+        plt.legend(loc="lower right")
         plt.show()
 
 
