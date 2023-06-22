@@ -425,7 +425,7 @@ class Profile:  # Could have a better name.
 
 
 # Helper for interactive use
-def make_profile(pinfo):
+def make_profile(pinfo, **kwargs):
     build_vm_keys = [
         "start_lat_lon",
         "end_lat_lon",
@@ -438,5 +438,7 @@ def make_profile(pinfo):
         "z2",
     ]
     vm = build_vm(**{k: pinfo[k] for k in build_vm_keys})
-    p = Profile(pinfo["name"], pinfo["start_lat_lon"], pinfo["end_lat_lon"], vm)
+    p = Profile(
+        pinfo["name"], pinfo["start_lat_lon"], pinfo["end_lat_lon"], vm, **kwargs
+    )
     return p
