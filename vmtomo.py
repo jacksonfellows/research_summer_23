@@ -378,12 +378,15 @@ class Profile:  # Could have a better name.
             min_lat - 0.5, max_lat + 0.5, min_lon - 0.5, max_lon + 0.5, min_mag=min_mag
         )
 
-    def plot(self, projected_earthquakes=None):
+    def plot(self, earthquake_max_dist_km=None):
         plt.suptitle(self.name)
         self.vm.plot(show=False)
         # Earthquakes. I think it makes sense to not store them with
         # the profile since we'll only need them for plotting.
-        if projected_earthquakes is not None:
+        if earthquake_max_dist_km is not None:
+            projected_earthquakes = self.project_earthquakes(
+                self.find_earthquakes_along_profile(), earthquake_max_dist_km
+            )
             quake_x, quake_z, quake_mag = (
                 projected_earthquakes[:, 0],
                 projected_earthquakes[:, 1],
