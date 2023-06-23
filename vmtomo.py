@@ -291,7 +291,14 @@ class Profile:  # Could have a better name.
     """
 
     def __init__(
-        self, name, start_lat_lon, end_lat_lon, vm, node_codes=None, shot_nos=None
+        self,
+        name,
+        start_lat_lon,
+        end_lat_lon,
+        vm,
+        node_codes=None,
+        shot_nos=None,
+        broadband_codes=None,
     ):
         self.name = name
         self.start_lat_lon = start_lat_lon
@@ -303,12 +310,19 @@ class Profile:  # Could have a better name.
         if node_codes is not None:
             self.node_x, self.node_z = self.project_nodes(node_codes)
         else:
-            self.node_x, self.node_z = np.zeros(0), np.zeros(0)
+            self.node_x, self.node_z = None, None
         # Shots
         if shot_nos is not None:
             self.shot_x, self.shot_z = self.project_shots(shot_nos)
         else:
-            self.shot_x, self.shot_z = np.zeros(0), np.zeros(0)
+            self.shot_x, self.shot_z = None, None
+        # Broadband stations
+        if broadband_codes is not None:
+            self.broadband_x, self.broadband_z = self.project_broadbands(
+                broadband_codes
+            )
+        else:
+            self.broadband_x, self.broadband_z = None, None
 
     def project_nodes(self, node_codes):
         """
@@ -343,6 +357,26 @@ class Profile:  # Could have a better name.
         )
         x = projected[2].to_numpy()
         z = np.zeros(x.shape)  # All shots happen at sea level.
+        return x, z
+
+    def project_broadbands(
+        self, broadband_codes
+    ):  # TODO: refactor this and the other project functions.
+        """
+        Helper function to project broadband stations to profile.
+        Returns arrays x, z in the model space.
+        """
+        df = utils._broadband_df[utils._broadband_df.code.isin(broadband_codes)]
+        broadband_locs = np.column_stack((df.lon, df.lat, df.elev_m))
+        projected = pygmt.project(
+            data=broadband_locs,
+            center=trev(self.start_lat_lon),
+            endpoint=trev(self.end_lat_lon),
+            unit=True,
+        )
+        x = projected[3].to_numpy()
+        z = projected[2].to_numpy()
+        z = -1e-3 * z  # Convert z from m of elevation to km of depth.
         return x, z
 
     def project_earthquakes(self, earthquake_locs, max_dist_from_profile_km):
@@ -406,23 +440,36 @@ class Profile:  # Could have a better name.
                 label="Earthquake",
             )
         # Nodes
-        plt.plot(
-            self.node_x,
-            self.node_z,
-            "o",
-            color="purple",
-            label="Nodal Station",
-            markersize=4.0,
-        )
+        if self.node_x is not None:
+            plt.plot(
+                self.node_x,
+                self.node_z,
+                "o",
+                color="purple",
+                label="Nodal Station",
+                markersize=4.0,
+            )
         # Shots
-        plt.plot(
-            self.shot_x,
-            self.shot_z,
-            "x",
-            color="blue",
-            label="Airgun Shot",
-            markersize=4.0,
-        )
+        if self.shot_x is not None:
+            plt.plot(
+                self.shot_x,
+                self.shot_z,
+                "x",
+                color="blue",
+                label="Airgun Shot",
+                markersize=4.0,
+            )
+        # Broadband stations
+        if self.broadband_x is not None:
+            plt.plot(
+                self.broadband_x,
+                self.broadband_z,
+                "s",
+                color="orange",
+                markeredgecolor="black",
+                label="Broadband Station",
+                markersize=4.0,
+            )
         plt.legend(loc="lower right")
         if show:
             plt.show()
