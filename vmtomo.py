@@ -27,6 +27,8 @@ class VMTOMO_VM:
         self.vel = vel
 
     def plot(self, show=True):
+        if show:
+            plt.figure()
         x = np.linspace(self.x1, self.x2, self.nx)
         z = np.linspace(self.z1, self.z2, self.nz)
         xx, zz = np.meshgrid(x, z)
@@ -378,7 +380,9 @@ class Profile:  # Could have a better name.
             min_lat - 0.5, max_lat + 0.5, min_lon - 0.5, max_lon + 0.5, min_mag=min_mag
         )
 
-    def plot(self, earthquake_max_dist_km=None, show=False):
+    def plot(self, earthquake_max_dist_km=None, show=True):
+        if show:
+            plt.figure()
         plt.suptitle(self.name)
         self.vm.plot(show=False)
         # Earthquakes. I think it makes sense to not store them with
