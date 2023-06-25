@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 import pygmt
 import functools
 from obspy.clients.fdsn.client import Client
+import scipy
 
 
 import utils
@@ -220,20 +221,23 @@ def build_vm(start_lat_lon, end_lat_lon, nx, nz, nr, x1, x2, z1, z2):
     start_crust_v = 5
     final_crust_v = 7.1  # Add 0.1 so we see the contour.
     crust_thickness = 8
-    depth = zz - elev_z
+    smooth_width = 20 * nx // (x2 - x1)
+    elev_z_smoothed = scipy.signal.savgol_filter(elev_z, smooth_width, 2)
+    depth_smoothed = zz - elev_z_smoothed
     vel[2] = np.clip(
         np.where(
-            depth < 0,
+            depth_smoothed < 0,
             start_sed_v,  # above the surface
             np.where(
-                depth < sed_thickness,
+                depth_smoothed < sed_thickness,
                 # in sediment
-                start_sed_v + (final_sed_v - start_sed_v) / sed_thickness * depth,
+                start_sed_v
+                + (final_sed_v - start_sed_v) / sed_thickness * depth_smoothed,
                 # in crust
                 start_crust_v
                 + (final_crust_v - start_crust_v)
                 / crust_thickness
-                * (depth - sed_thickness),
+                * (depth_smoothed - sed_thickness),
             ),
         ),
         start_sed_v,
