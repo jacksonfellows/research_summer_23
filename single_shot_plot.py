@@ -2,6 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import utils
 import obspy
+import obspy.signal.trigger
 import os
 
 
