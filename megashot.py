@@ -120,7 +120,7 @@ def megashot(center_shot, node_code, shots_per_side):
     plt.show()
 
 
-def megashot_all_nodes(center_shot, shots_per_side):
+def megashot_all_nodes(center_shot, shots_per_side, mode="mean"):
     # First load all the shots.
     shotnos = range(center_shot - shots_per_side, center_shot + shots_per_side + 1)
     shot_sts = {}
@@ -170,9 +170,9 @@ def megashot_all_nodes(center_shot, shots_per_side):
             == t0.stats.segy.trace_header.trace_number_within_the_original_field_record
             for t in ts
         )
-        t_stacked = np.zeros(t0.data.shape)
+        t_stacked = np.zeros((len(ts), t0.data.shape[0]))
 
-        for t_ in ts:
+        for i, t_ in enumerate(ts):
             offset1_m = utils.source_receiver_offset(t0)
             offset2_m = utils.source_receiver_offset(t_)
             diff_m = offset2_m - offset1_m
@@ -191,14 +191,21 @@ def megashot_all_nodes(center_shot, shots_per_side):
             lag_s = lag / t0.stats.sampling_rate
             # print(f"lag of {lag_s} s for change in offset of {diff_m}")
             if lag == 0:
-                t_stacked += t_
+                t_stacked[i] = t_
             elif lag > 0:
                 # shift t_ to the left
-                t_stacked[:-lag] += t_[lag:]
+                t_stacked[i][:-lag] = t_[lag:]
             else:
                 # shift t_ to the right
-                t_stacked[-lag:] += t_[:lag]
+                t_stacked[i][-lag:] = t_[:lag]
 
-        bt.add_trace(t_stacked / len(shotnos), 1e-3 * utils.source_receiver_offset(t0))
+        if mode == "mean":
+            t_comb = np.mean(t_stacked, axis=0)
+        elif mode == "median":
+            t_comb = np.median(t_stacked, axis=0)
+        else:
+            assert False
+
+        bt.add_trace(t_comb, 1e-3 * utils.source_receiver_offset(t0))
 
     return bt
