@@ -63,7 +63,7 @@ class BinnedTraces:
         if show:
             plt.show()
 
-    def plot_mat(self, red_vel=6.0, ylim=(-2, 8), show=True):
+    def plot_mat(self, red_vel=6.0, ylim=(-2, 8), vmin=None, vmax=None, show=True):
         fig, axs = plt.subplots(2, 1, sharex=True, height_ratios=[0.8, 0.2])
         axs[0].set_xlim(self.offsets.max() + 2, self.offsets.min() - 2)
         axs[0].set_ylim(*ylim)
@@ -75,7 +75,7 @@ class BinnedTraces:
             np.arange(self.binned.shape[1]) / self.sampling_rate, self.offsets / red_vel
         )
         vv = self.binned.T / self.counts
-        axs[0].pcolormesh(xx, yy, vv)
+        axs[0].pcolormesh(xx, yy, vv, vmin=vmin, vmax=vmax)
         axs[1].bar(self.offsets, self.counts)
         plt.tight_layout()
         if show:
