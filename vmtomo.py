@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import struct
 from matplotlib import pyplot as plt
 import pygmt
@@ -317,9 +318,9 @@ class Profile:  # Could have a better name.
             self.node_x, self.node_z = None, None
         # Shots
         if shot_nos is not None:
-            self.shot_x, self.shot_z = self.project_shots(shot_nos)
+            self.shot_df = self.project_shots(shot_nos)
         else:
-            self.shot_x, self.shot_z = None, None
+            self.shot_df = None
         # Broadband stations
         if broadband_codes is not None:
             self.broadband_x, self.broadband_z = self.project_broadbands(
@@ -348,8 +349,7 @@ class Profile:  # Could have a better name.
 
     def project_shots(self, shot_nos):
         """
-        Helper function to project shots to profile. Returns arrays x, z in
-        the model space.
+        Helper function to project shots to profile.
         """
         df = utils._shot_df[utils._shot_df.shotno.isin(shot_nos)]
         node_locs = np.column_stack((df.lon, df.lat))
@@ -359,9 +359,15 @@ class Profile:  # Could have a better name.
             endpoint=trev(self.end_lat_lon),
             unit=True,
         )
-        x = projected[2].to_numpy()
-        z = np.zeros(x.shape)  # All shots happen at sea level.
-        return x, z
+        shot_depth_km = 1e-3 * 12
+        return pd.DataFrame(
+            {
+                "shotno": df.shotno,
+                "x": projected[2],
+                "y": projected[3],
+                "z": np.full(len(projected[2]), shot_depth_km),
+            }
+        )
 
     def project_broadbands(
         self, broadband_codes
@@ -454,10 +460,10 @@ class Profile:  # Could have a better name.
                 markersize=4.0,
             )
         # Shots
-        if self.shot_x is not None:
+        if self.shot_df is not None:
             plt.plot(
-                self.shot_x,
-                self.shot_z,
+                self.shot_df.x,
+                self.shot_df.z,
                 "x",
                 color="blue",
                 label="Airgun Shot",
@@ -477,6 +483,15 @@ class Profile:  # Could have a better name.
         plt.legend(loc="lower right")
         if show:
             plt.show()
+
+    def write_shots_file(self, shots_file):
+        self.shot_df.to_csv(
+            shots_file,
+            sep=" ",
+            columns=["shotno", "x", "y", "z"],
+            header=False,
+            index=False,
+        )
 
 
 # Helper for interactive use
