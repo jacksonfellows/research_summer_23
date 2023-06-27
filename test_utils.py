@@ -1,3 +1,5 @@
+import obspy
+
 import utils
 
 # Let's make sure I don't mess up stat_lat_lon before I rewrite stuff.
@@ -63,3 +65,14 @@ def test_shot_lat_lon():
     assert utils.shot_lat_lon(15256) == (55.058355, -155.29734)
     assert utils.shot_lat_lon(23167) == (54.201261, -156.90926)
     assert utils.shot_lat_lon(22084) == (53.684722, -156.42038)
+
+
+def test_shot_starttime():
+    for shotno in [1000, 1100, 1200, 1300]:
+        st = utils.load_shot(shotno)
+        real_starttime = obspy.UTCDateTime(
+            utils._shot_df[utils._shot_df.shotno == shotno].iloc[0].time
+        )
+        time_diff_s = abs(st[0].stats.starttime - real_starttime)
+        # Assert time is the same within the error of our sampling rate.
+        assert time_diff_s < (1 / st[0].stats.sampling_rate)
