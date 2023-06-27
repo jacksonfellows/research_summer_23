@@ -7,12 +7,6 @@ import glob
 import itertools
 
 
-def load_shot(shotno):
-    shotno = str(shotno)
-    shot_dir = os.path.join("shots", shotno)
-    stream = obspy.core.stream.Stream()
-    for path in glob.glob(os.path.join(shot_dir, "*.sgy")):
-        stream += obspy.read(path, unpack_trace_headers=True)
     return stream
 
 
@@ -21,6 +15,22 @@ _node_df = pd.read_csv("node_lat_lon_elev.csv")
 _shot_df = pd.read_csv("shots_table.csv")
 _broadband_df = pd.read_csv("broadband_lat_lon_elev.csv")
 _volcanoes_df = pd.read_csv("volcanoes-2023-06-15_14-58-44_-0600_cleaned.csv")
+
+
+def load_shot(shotno):
+    shot_dir = os.path.join("shots", str(shotno))
+    stream = obspy.core.stream.Stream()
+    for path in glob.glob(os.path.join(shot_dir, "*.sgy")):
+        stream += obspy.read(path, unpack_trace_headers=True)
+    # The starttime of the stream is truncated to the second. We need
+    # to get the real time of the shot (with >ms precision) and cut
+    # the stream so it actually starts at the shot time.
+    real_starttime = obspy.UTCDateTime(_shot_df[_shot_df.shotno == shotno].iloc[0].time)
+    real_endtime = real_starttime + 60
+    stream.trim(
+        real_starttime, real_endtime, pad=True, fill_value=0, nearest_sample=False
+    )
+    return stream
 
 
 def node_lat_lon(stat_code):
