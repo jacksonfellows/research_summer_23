@@ -347,6 +347,11 @@ def make_model_map():
             x=(profile["start_lat_lon"][1], profile["end_lat_lon"][1]),
             y=(profile["start_lat_lon"][0], profile["end_lat_lon"][0]),
             pen="0.06c,4_4:4p",
+            label=profile["name"],
         )
+
+    # legend
+    with pygmt.config(FONT="10"):
+        fig.legend(position="JBL+jBL+o0.2c", box="+gwhite+p1p")
 
     fig.savefig(os.path.join(figs_dir, "model_map.pdf"))
