@@ -88,8 +88,8 @@ def megashot(center_shot, node_code, shots_per_side):
         diff_m = offset2_m - offset1_m
         min_v = 1500  # m/s
         max_v = 8000  # m/s
-        least_lag = -diff_m / max_v * t0.stats.sampling_rate
-        most_lag = -diff_m / min_v * t0.stats.sampling_rate
+        least_lag = diff_m / max_v * t0.stats.sampling_rate
+        most_lag = diff_m / min_v * t0.stats.sampling_rate
         max_lag = max(most_lag, least_lag)
         min_lag = min(most_lag, least_lag)
         correlation = scipy.signal.correlate(t0.data, t_.data)
@@ -110,17 +110,17 @@ def megashot(center_shot, node_code, shots_per_side):
             t_stacked[-lag:] += t_[:lag]
 
     fig, axs = plt.subplots(2, 1, sharex=True)
-    for i, other_shot in enumerate(shots_to_stack):
+    for other_shot in shots_to_stack:
         axs[0].plot(
             process_trace(load_trace(utils.load_shot(other_shot), node_code)).data,
-            label=f"{i-shots_per_side}",
+            label=f"{other_shot}",
         )
     axs[0].legend()
     axs[1].plot(t_stacked / len(shots_to_stack))
     plt.show()
 
 
-def megashot_all_nodes(center_shot, shots_per_side, mode="mean"):
+def megashot_all_nodes(center_shot, shots_per_side, min_v, max_v):
     # First load all the shots.
     shotnos = range(center_shot - shots_per_side, center_shot + shots_per_side + 1)
     shot_sts = {}
@@ -170,16 +170,14 @@ def megashot_all_nodes(center_shot, shots_per_side, mode="mean"):
             == t0.stats.segy.trace_header.trace_number_within_the_original_field_record
             for t in ts
         )
-        t_stacked = np.zeros((len(ts), t0.data.shape[0]))
+        t_stacked = np.zeros(t0.data.shape)
 
         for i, t_ in enumerate(ts):
             offset1_m = utils.source_receiver_offset(t0)
             offset2_m = utils.source_receiver_offset(t_)
             diff_m = offset2_m - offset1_m
-            min_v = 1500  # m/s
-            max_v = 8000  # m/s
-            least_lag = -diff_m / max_v * t0.stats.sampling_rate
-            most_lag = -diff_m / min_v * t0.stats.sampling_rate
+            least_lag = diff_m / max_v * t0.stats.sampling_rate
+            most_lag = diff_m / min_v * t0.stats.sampling_rate
             max_lag = max(most_lag, least_lag)
             min_lag = min(most_lag, least_lag)
             correlation = scipy.signal.correlate(t0.data, t_.data)
@@ -188,24 +186,15 @@ def megashot_all_nodes(center_shot, shots_per_side, mode="mean"):
                 correlation, (lags < min_lag) | (lags > max_lag)
             )
             lag = lags[np.argmax(correlation_masked)]
-            lag_s = lag / t0.stats.sampling_rate
-            # print(f"lag of {lag_s} s for change in offset of {diff_m}")
             if lag == 0:
-                t_stacked[i] = t_
+                t_stacked += t_
             elif lag > 0:
                 # shift t_ to the left
-                t_stacked[i][:-lag] = t_[lag:]
+                t_stacked[:-lag] += t_[lag:]
             else:
                 # shift t_ to the right
-                t_stacked[i][-lag:] = t_[:lag]
+                t_stacked[-lag:] += t_[:lag]
 
-        if mode == "mean":
-            t_comb = np.mean(t_stacked, axis=0)
-        elif mode == "median":
-            t_comb = np.median(t_stacked, axis=0)
-        else:
-            assert False
-
-        bt.add_trace(t_comb, 1e-3 * utils.source_receiver_offset(t0))
+        bt.add_trace(t_stacked / len(shotnos), 1e-3 * utils.source_receiver_offset(t0))
 
     return bt
