@@ -62,6 +62,8 @@ class BinnedTraces:
         plt.tight_layout()
         if show:
             plt.show()
+        else:
+            return fig, axs
 
     def plot_mat(self, red_vel=6.0, ylim=(-2, 8), vmin=None, vmax=None, show=True):
         fig, axs = plt.subplots(2, 1, sharex=True, height_ratios=[0.8, 0.2])
@@ -80,3 +82,42 @@ class BinnedTraces:
         plt.tight_layout()
         if show:
             plt.show()
+        else:
+            return fig, axs
+
+    def pick(
+        self, mode="matrix", red_vel=6.0, ylim=(-2, 8), vmin=None, vmax=None, scale=1
+    ):
+        if mode == "matrix":
+            fig, axs = self.plot_mat(
+                show=False, red_vel=red_vel, ylim=ylim, vmin=vmin, vmax=None
+            )
+        elif mode == "squiggle":
+            fig, axs = self.plot(show=False, red_vel=red_vel, ylim=ylim, scale=scale)
+        else:
+            assert False
+
+        xs = []
+        ys = []
+        (line,) = axs[0].plot([], [], "x", color="red")
+
+        def onclick_callback(event):
+            if event.key == "shift":
+                offset = self.round_to_bin(event.xdata)
+                red_time = event.ydata
+                time = red_time + offset / red_vel
+                print(f"{offset:0.2f} km, {time:0.2f} s")
+                xs.append(offset)
+                ys.append(red_time)
+                line.set_data(xs, ys)
+                axs[0].draw_artist(line)
+                axs[0].figure.canvas.update()
+
+        cid = fig.canvas.mpl_connect("button_press_event", onclick_callback)
+
+        def onclose_callback(event):
+            print(xs, ys)
+
+        cid2 = fig.canvas.mpl_connect("close_event", onclose_callback)
+
+        plt.show()
