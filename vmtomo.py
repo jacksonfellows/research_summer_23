@@ -187,12 +187,12 @@ def build_vm(start_lat_lon, end_lat_lon, nx, nz, nr, x1, x2, z1, z2):
 
     # Set the boundary locations.
 
-    # Boundary 1: Sea level
-    zrf[0] = 0
-
     # Boundary 2: Elevation/bathymetry
     elev_z = make_elev_boundary(region, start_lat_lon, end_lat_lon, x2 - x1, nx)
     zrf[1] = elev_z
+
+    # Boundary 1: Sea level
+    zrf[0] = np.minimum(0, elev_z)
 
     # Boundary 3: Moho
     slab_z = make_slab_boundary(region, start_lat_lon, end_lat_lon, x2 - x1, nx)
