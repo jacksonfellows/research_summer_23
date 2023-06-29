@@ -11,10 +11,12 @@ import itertools
 
 
 # locations
-_node_df = pd.read_csv("node_lat_lon_elev.csv")
-_shot_df = pd.read_csv("shots_table.csv")
-_broadband_df = pd.read_csv("broadband_lat_lon_elev.csv")
-_volcanoes_df = pd.read_csv("volcanoes-2023-06-15_14-58-44_-0600_cleaned.csv")
+_node_df = pd.read_csv("./location_data/node_lat_lon_elev.csv")
+_shot_df = pd.read_csv("./location_data/shots_table.csv")
+_broadband_df = pd.read_csv("./location_data/broadband_lat_lon_elev.csv")
+_volcanoes_df = pd.read_csv(
+    "./location_data/volcanoes-2023-06-15_14-58-44_-0600_cleaned.csv"
+)
 
 
 def load_shot(shotno):
