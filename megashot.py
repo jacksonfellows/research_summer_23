@@ -112,11 +112,12 @@ def megashot(center_shot, node_code, shots_per_side):
     fig, axs = plt.subplots(2, 1, sharex=True)
     for other_shot in shots_to_stack:
         axs[0].plot(
+            t0.times(),
             process_trace(load_trace(utils.load_shot(other_shot), node_code)).data,
             label=f"{other_shot}",
         )
     axs[0].legend()
-    axs[1].plot(t_stacked / len(shots_to_stack))
+    axs[1].plot(t0.times(), t_stacked / len(shots_to_stack))
     plt.show()
 
 
