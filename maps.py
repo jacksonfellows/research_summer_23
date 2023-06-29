@@ -12,21 +12,23 @@ figs_dir = "figures"
 
 def load_usgs_faults_for_region(region):
     return geopandas.read_file(
-        "./Qfaults_GIS/SHP/Qfaults_US_Database.dbf",
+        "./map_data/Qfaults_GIS/SHP/Qfaults_US_Database.dbf",
         bbox=(region[0], region[2], region[1], region[3]),
     )
 
 
 def load_rupture_zones():
-    df = geopandas.read_file("./traced_rupture_zones_2.gpkg")
+    df = geopandas.read_file("./map_data/traced_rupture_zones_2.gpkg")
     return df.sort_values(by=["rupture_name"])
 
 
 rupture_zones = load_rupture_zones()
-plate_boundaries = geopandas.read_file("./tectonicplates-master/PB2002_boundaries.shp")
-aleut_lines = pd.read_csv("./aleut_lines.csv")
-edge_lines = geopandas.read_file("./traced_edge_transect.gpkg")
-avo_stations = pd.read_csv("./avo_lat_lon_elev.csv")
+plate_boundaries = geopandas.read_file(
+    "./map_data/tectonicplates-master/PB2002_boundaries.shp"
+)
+aleut_lines = pd.read_csv("./map_data/aleut_lines.csv")
+edge_lines = geopandas.read_file("./map_data/traced_edge_transect.gpkg")
+avo_stations = pd.read_csv("./map_data/avo_lat_lon_elev.csv")
 
 
 def make_overview_map():
@@ -85,7 +87,7 @@ def make_aacse_map():
 
     # slab contours
     fig.plot(
-        "./alu_slab2_dep_02.23.18_contours.in",
+        "./map_data/alu_slab2_dep_02.23.18_contours.in",
         pen="0.5p,pink",
         label="Slab 20 km",
     )
