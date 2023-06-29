@@ -37,7 +37,7 @@ def bin_all_shots_sta_lta(shot_nos):
         print(f"adding shot {shotno} to binned traces")
         for t in st:
             offset = utils.source_receiver_offset(t) / 1e3
-            bt.add_trace(t, offset)
+            bt.add_trace(t.data, offset)
     return bt
 
 
@@ -62,7 +62,7 @@ def bin_all_shots_envelope_sta_lta(shot_nos):
         print(f"adding shot {shotno} to binned traces")
         for t in st:
             offset = utils.source_receiver_offset(t) / 1e3
-            bt.add_trace(t, offset)
+            bt.add_trace(t.data, offset)
     return bt
 
 
