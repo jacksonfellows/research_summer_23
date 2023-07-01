@@ -313,9 +313,9 @@ class Profile:  # Could have a better name.
         self.x1, self.x2, self.z1, self.z2 = vm.x1, vm.x2, vm.z1, vm.z2
         # Nodes
         if node_codes is not None:
-            self.node_x, self.node_z = self.project_nodes(node_codes)
+            self.node_df = self.project_nodes(node_codes)
         else:
-            self.node_x, self.node_z = None, None
+            self.node_df = None
         # Shots
         if shot_nos is not None:
             self.shot_df = self.project_shots(shot_nos)
@@ -335,17 +335,16 @@ class Profile:  # Could have a better name.
         the model space.
         """
         df = utils._node_df[utils._node_df.code.isin(node_codes)]
-        node_locs = np.column_stack((df.lon, df.lat, df.elev_m))
+        node_locs = np.column_stack((df.lon, df.lat, -1e-3 * df.elev_m))
         projected = pygmt.project(
             data=node_locs,
             center=trev(self.start_lat_lon),
             endpoint=trev(self.end_lat_lon),
             unit=True,
         )
-        x = projected[3].to_numpy()
-        z = projected[2].to_numpy()
-        z = -1e-3 * z  # Convert z from m of elevation to km of depth.
-        return x, z
+        return pd.DataFrame(
+            {"code": df.code, "x": projected[3], "y": projected[4], "z": projected[2]}
+        )
 
     def project_shots(self, shot_nos):
         """
@@ -450,10 +449,10 @@ class Profile:  # Could have a better name.
                 label="Earthquake",
             )
         # Nodes
-        if self.node_x is not None:
+        if self.node_df is not None:
             plt.plot(
-                self.node_x,
-                self.node_z,
+                self.node_df.x,
+                self.node_df.z,
                 "o",
                 color="purple",
                 label="Nodal Station",
@@ -489,6 +488,15 @@ class Profile:  # Could have a better name.
             shots_file,
             sep=" ",
             columns=["shotno", "x", "y", "z"],
+            header=False,
+            index=False,
+        )
+
+    def write_nodes_file(self, nodes_file):
+        self.node_df.to_csv(
+            nodes_file,
+            sep=" ",
+            columns=["code", "x", "y", "z"],
             header=False,
             index=False,
         )
