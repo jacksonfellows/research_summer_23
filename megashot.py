@@ -72,7 +72,7 @@ def correlate_traces(t1, t2):
     plt.show()
 
 
-def megashot(center_shot, node_code, shots_per_side):
+def megashot(center_shot, node_code, shots_per_side, show=True):
     t0 = process_trace(load_trace(utils.load_shot(center_shot), node_code))
 
     t_stacked = np.zeros(t0.data.shape)
@@ -118,7 +118,9 @@ def megashot(center_shot, node_code, shots_per_side):
         )
     axs[0].legend()
     axs[1].plot(t0.times(), t_stacked / len(shots_to_stack))
-    plt.show()
+    axs[1].set_xlabel("Time (s)")
+    if show:
+        plt.show()
 
 
 def megashot_all_nodes(center_shot, shots_per_side, min_v, max_v):
