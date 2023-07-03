@@ -23,5 +23,4 @@ def load(filename):
             for l in len_.flat:
                 rays.append((xry[start : start + l], zry[start : start + l]))
                 start += l
-        # is there still stuff in the ray file?
         return rays
