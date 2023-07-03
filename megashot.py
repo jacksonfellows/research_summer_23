@@ -154,7 +154,7 @@ def megashot_all_nodes(center_shot, shots_per_side, min_v, max_v):
             last_n = n
         shot_sts[shotno] = st
 
-    min_offset, max_offset = utils.calc_min_max_offsets_km(shotnos)
+    min_offset, max_offset = utils.calc_min_max_offsets_km([center_shot])
     sample_len = 60  # s
     sampling_rate = int(shot_sts[center_shot][0].stats.sampling_rate)
     bt = binned.BinnedTraces(min_offset, max_offset, 0.25, sample_len, sampling_rate)
