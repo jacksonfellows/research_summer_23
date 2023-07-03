@@ -66,6 +66,24 @@ def bin_all_shots_envelope_sta_lta(shot_nos):
     return bt
 
 
+def bin_all_shots_bandpass(shot_nos):
+    min_offset, max_offset = utils.calc_min_max_offsets_km(shot_nos)
+    min_offset, max_offset = np.floor(min_offset), np.ceil(max_offset)
+    print(f"min_offset = {min_offset}, max_offset = {max_offset}")
+    bt = binned.BinnedTraces(min_offset, max_offset, 0.25, 60, 500)
+    for shotno in shot_nos:
+        print(f"loading shot {shotno}")
+        st = utils.load_shot(shotno)
+        print(f"applying bandpass to shot {shotno}")
+        utils.bandpass_stream_inplace(st)
+        print(f"adding shot {shotno} to binned traces")
+        for t in st:
+            t.data /= np.abs(t.data).max()
+            offset = utils.source_receiver_offset(t) / 1e3
+            bt.add_trace(t.data, offset)
+    return bt
+
+
 def plot_trace(t):
     x = np.arange(t.shape[0])
     plt.plot(x, t, "k", linewidth=0.1)
