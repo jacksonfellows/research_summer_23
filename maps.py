@@ -344,11 +344,14 @@ def make_model_map():
     )
 
     # profile lines
-    for profile in (profile_info.profile_1, profile_info.profile_2):
+    for profile, color in (
+        (profile_info.profile_1, "saddlebrown"),
+        (profile_info.profile_2, "limegreen"),
+    ):
         fig.plot(
             x=(profile["start_lat_lon"][1], profile["end_lat_lon"][1]),
             y=(profile["start_lat_lon"][0], profile["end_lat_lon"][0]),
-            pen="0.06c,4_4:4p",
+            pen=f"0.06c,{color},4_4:4p",
             label=profile["name"],
         )
 
