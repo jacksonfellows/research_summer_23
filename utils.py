@@ -49,8 +49,8 @@ def load_shot(shotno):
     return load_dir(shot_dir, real_starttime, 60)
 
 
-def load_quake(quake_ns):
-    quake_dir = os.path.join("earthquakes", str(quake_ns))
+def load_quake(quake_ns, component="Z"):
+    quake_dir = os.path.join(f"earthquakes_{component}", str(quake_ns))
     real_starttime = obspy.UTCDateTime(
         _earthquake_df[_earthquake_df.ns == int(quake_ns)].iloc[0].origin_time
     )

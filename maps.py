@@ -360,3 +360,58 @@ def make_model_map():
         fig.legend(position="JBL+jBL+o0.2c", box="+gwhite+p1p")
 
     fig.savefig(os.path.join(figs_dir, "model_map.pdf"))
+
+
+def make_quake_map():
+    fig = pygmt.Figure()
+    region = (-155.5, -150.5, 56, 59)
+
+    # set area
+    fig.basemap(projection="M12c", region=region, frame="a1f")
+
+    # bathymetry & topography
+    grid = pygmt.datasets.load_earth_relief(resolution="15s", region=region)
+    pygmt.makecpt(cmap="geo", series=(-8000, 8000))
+    fig.grdimage(grid=grid, cmap=True)
+
+    # nodal stations
+    fig.plot(
+        x=utils._node_df.lon,
+        y=utils._node_df.lat,
+        style="c0.06c",
+        fill="purple",
+        label="Nodal Station+S0.15c",
+    )
+
+    # broadband stations
+    fig.plot(
+        x=utils._broadband_df.lon,
+        y=utils._broadband_df.lat,
+        style="s0.2c",
+        fill="orange",
+        pen="black",
+        label="Broadband Station",
+    )
+    fig.text(
+        x=utils._broadband_df.lon,
+        y=utils._broadband_df.lat,
+        text=utils._broadband_df.code,
+    )
+
+    # earthquakes
+    for i, row in utils._earthquake_df.iterrows():
+        fig.plot(
+            x=row.origin_longitude,
+            y=row.origin_latitude,
+            style="x0.4c",
+            pen="0.05c,red",
+        )
+        fig.text(x=row.origin_longitude, y=row.origin_latitude, text=f"{i}")
+        if i >= 10:
+            break
+
+    # legend
+    with pygmt.config(FONT="10"):
+        fig.legend(position="JBL+jBL+o0.2c", box="+gwhite+p1p")
+
+    fig.savefig(os.path.join(figs_dir, "quake_map.pdf"))
