@@ -10,6 +10,13 @@ import itertools
     return stream
 
 
+def load_earthquake_df():
+    df = pd.read_csv("grace_earthquake_events.csv", sep="\t")
+    ns = [obspy.UTCDateTime(row.origin_time).ns for _, row in df.iterrows()]
+    df["ns"] = ns
+    return df
+
+
 # locations
 _node_df = pd.read_csv("./location_data/node_lat_lon_elev.csv")
 _shot_df = pd.read_csv("./location_data/shots_table.csv")
@@ -17,27 +24,47 @@ _broadband_df = pd.read_csv("./location_data/broadband_lat_lon_elev.csv")
 _volcanoes_df = pd.read_csv(
     "./location_data/volcanoes-2023-06-15_14-58-44_-0600_cleaned.csv"
 )
+_earthquake_df = load_earthquake_df()
 
 
-def load_shot(shotno):
-    shot_dir = os.path.join("shots", str(shotno))
+def load_dir(segy_dir, real_starttime, len_s):
     stream = obspy.core.stream.Stream()
-    for path in glob.glob(os.path.join(shot_dir, "*.sgy")):
+    for path in glob.glob(os.path.join(segy_dir, "*.sgy")):
         stream += obspy.read(path, unpack_trace_headers=True)
     # The starttime of the stream is truncated to the second. We need
     # to get the real time of the shot (with >ms precision) and cut
     # the stream so it actually starts at the shot time.
-    real_starttime = obspy.UTCDateTime(_shot_df[_shot_df.shotno == shotno].iloc[0].time)
-    real_endtime = real_starttime + 60
+    real_endtime = real_starttime + len_s
     stream.trim(
         real_starttime, real_endtime, pad=True, fill_value=0, nearest_sample=False
     )
     return stream
 
 
+def load_shot(shotno):
+    shot_dir = os.path.join("shots", str(shotno))
+    real_starttime = obspy.UTCDateTime(
+        _shot_df[_shot_df.shotno == int(shotno)].iloc[0].time
+    )
+    return load_dir(shot_dir, real_starttime, 60)
+
+
+def load_quake(quake_ns):
+    quake_dir = os.path.join("earthquakes", str(quake_ns))
+    real_starttime = obspy.UTCDateTime(
+        _earthquake_df[_earthquake_df.ns == int(quake_ns)].iloc[0].origin_time
+    )
+    return load_dir(quake_dir, real_starttime, 60)
+
+
 def node_lat_lon(stat_code):
     info = _node_df[_node_df.code == stat_code].iloc[0]
     return info.lat, info.lon
+
+
+def quake_lat_lon(quake_ns):
+    row = _earthquake_df[_earthquake_df.ns == quake_ns].iloc[0]
+    return row.origin_latitude, row.origin_longitude
 
 
 def shots_for_line(lineno):
