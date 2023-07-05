@@ -137,6 +137,19 @@ def remove_bad_traces_inplace(st):
             st.remove(tr)
 
 
+def sta_lta_inplace(st, short_window_s, long_window_s):
+    sampling_rate = st[0].stats.sampling_rate
+    for t in st:
+        t.data = obspy.signal.filter.envelope(t.data)
+        t.data = obspy.signal.trigger.classic_sta_lta(
+            t.data, short_window_s * sampling_rate, long_window_s * sampling_rate
+        )
+        t.data /= np.abs(t.data).max()  # normalize
+        if np.isnan(t.data).any():
+            print(f"nan! - skipping trace {t}")
+            st.remove(t)
+
+
 def min_dist_to_square(lat, lon, min_lat, max_lat, min_lon, max_lon):
     assert not (
         min_lat < lat < max_lat and min_lon < lon < max_lon

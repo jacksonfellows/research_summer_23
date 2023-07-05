@@ -24,15 +24,7 @@ def bin_quake(quake_ns):
     sampling_rate = st[0].stats.sampling_rate
     utils.remove_bad_traces_inplace(st)
     st.filter("bandpass", freqmin=3.0, freqmax=20.0, zerophase=True)
-    for t in st:
-        t.data = obspy.signal.filter.envelope(t.data)
-        t.data = obspy.signal.trigger.classic_sta_lta(
-            t.data, 0.01 * sampling_rate, 1.0 * sampling_rate
-        )
-        t.data /= np.abs(t.data).max()  # normalize
-        if np.isnan(t.data).any():
-            print(f"nan! - skipping trace {t}")
-            st.remove(t)
+    utils.sta_lta_inplace(st, 0.01, 1.0)
     offsets = [
         quake_node_offset_km(
             quake_ns,
