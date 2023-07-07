@@ -222,7 +222,7 @@ contains
 
    subroutine read_vm
 
-      character(60) :: vmfile
+      character(80) :: vmfile
       integer :: j
 
       integer :: m,ix,iz,i,ii

@@ -173,7 +173,7 @@ contains
 
    subroutine read_vm
 
-      character(60) :: vmfile
+      character(80) :: vmfile
       integer :: j
 
       integer :: m,ix,iz,i,ii
@@ -328,7 +328,7 @@ contains
 
    subroutine read_picks
 
-      character(60) :: pick_file,shot_file
+      character(80) :: pick_file,shot_file
       real :: range
       integer :: instr
       integer :: j,k,m,i,ji,ii,jj,imin,jmin
