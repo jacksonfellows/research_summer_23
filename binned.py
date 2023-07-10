@@ -84,3 +84,21 @@ class BinnedTraces:
             plt.show()
         else:
             return fig, axs
+
+    def plot_raw_mat(self, ylim, vmin=None, vmax=None, show=True):
+        fig, axs = plt.subplots(2, 1, sharex=True, height_ratios=[0.8, 0.2])
+        axs[0].set_xlim(self.offsets.max() + 2, self.offsets.min() - 2)
+        axs[0].set_ylim(*ylim)
+        axs[0].set_ylabel(f"Travel time (s)")
+        axs[1].set_xlabel("Offset (km)")
+        axs[1].set_ylabel("# of traces")
+        xx = np.tile(self.offsets, (self.binned.shape[1], 1))
+        yy = np.arange(self.binned.shape[1]) / self.sampling_rate
+        vv = self.binned.T / self.counts
+        axs[0].pcolormesh(xx, yy, vv, vmin=vmin, vmax=vmax)
+        axs[1].bar(self.offsets, self.counts)
+        plt.tight_layout()
+        if show:
+            plt.show()
+        else:
+            return fig, axs

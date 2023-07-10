@@ -218,6 +218,9 @@ def pick_megashot(profile, shotno, shots_per_side, min_v, max_v):
         nonlocal picks
         picks = pick(bt, picks, mode="matrix", vmin=vmin, vmax=vmax, **kwargs)
 
+    def plot_raw(ylim, **kwargs):
+        bt.plot_raw_mat(ylim, **kwargs)
+
     code.interact(
         local={
             "guess": guess_picks,
@@ -225,5 +228,6 @@ def pick_megashot(profile, shotno, shots_per_side, min_v, max_v):
             "plot_mat": plot_matrix,
             "save": _save_picks,
             "reshoot": reshoot,
+            "plot_raw": plot_raw,
         }
     )
