@@ -125,29 +125,50 @@ def invert(
         )
 
 
-def run_inversion(profile, initial_vm, picks, inversion_dir, n_iters, drp=0.1):
+def run_inversion(
+    profile, initial_vm, picks, inversion_dir, n_iters, drp=0.1, **invert_kargs
+):
     # Keeps all the generated rayfiles and velocity models in the inversion_dir.
     n_iter = 0
 
     # Get started with initial vm.
-    print(f"dumping initial velocity model")
     vm_path = os.path.join(inversion_dir, f"vm_{n_iter:03}")
-    initial_vm.dump(vm_path)
+    if not os.path.exists(vm_path):
+        print(f"dumping initial velocity model")
+        initial_vm.dump(vm_path)
+    else:
+        print(f"initial velocity model already exists - skipping dumping")
 
     while n_iter < n_iters:
         vm_path = os.path.join(inversion_dir, f"vm_{n_iter:03}")
         rayfile_path = os.path.join(inversion_dir, f"rayfile_{n_iter:03}")
-        print(f"raytracing for iteration {n_iter:03}")
-        trace_picks(profile, vm_path, picks, rayfile_path, drp=drp)
-        print(f"inverting for iteration {n_iter:03}")
-        invert(
-            vm_path,
-            rayfile_path,
-            os.path.join(inversion_dir, f"vm_{n_iter+1:03}"),
-            os.path.join(inversion_dir, f"dws_vel_{n_iter+1:03}"),
-            os.path.join(inversion_dir, f"dws_zrf_{n_iter+1:03}"),
-            os.path.join(inversion_dir, f"mask_{n_iter+1:03}"),
-            itop=picks.phase.min(),
-            ibot=picks.phase.max(),
-        )
+        if not os.path.exists(rayfile_path):
+            print(f"raytracing for iteration {n_iter:03}")
+            trace_picks(profile, vm_path, picks, rayfile_path, drp=drp)
+        else:
+            print(f"rayfile {rayfile_path} already exists - skipping raytracing")
+        new_vm_path = os.path.join(inversion_dir, f"vm_{n_iter+1:03}")
+        if not os.path.exists(new_vm_path):
+            print(f"inverting for iteration {n_iter:03}")
+            invert(
+                vm_path,
+                rayfile_path,
+                new_vm_path,
+                os.path.join(inversion_dir, f"dws_vel_{n_iter+1:03}"),
+                os.path.join(inversion_dir, f"dws_zrf_{n_iter+1:03}"),
+                os.path.join(inversion_dir, f"mask_{n_iter+1:03}"),
+                itop=picks.phase.min(),
+                ibot=picks.phase.max(),
+                **invert_kargs,
+            )
+            if (
+                not os.path.exists(os.path.join(inversion_dir, f"vm_{n_iter+1:03}"))
+                or os.path.getsize(os.path.join(inversion_dir, f"vm_{n_iter+1:03}"))
+                == 0
+            ):
+                raise RuntimeError(
+                    "Inversion failed! (did not produce a new velocity model)"
+                )
+        else:
+            print(f"velocity model {new_vm_path} already exists - skipping inversion")
         n_iter += 1
