@@ -207,7 +207,7 @@ def pick_megashot(profile, shotno, shots_per_side, min_v, max_v):
         )
 
     def _save_picks(phase):
-        print(f"saving picks to {pick_file} with {phase=}")
+        print(f"saving {len(picks)} picks to {pick_file} with {phase=}")
         save_picks(make_pick_file(profile, shotno, phase, picks), pick_file)
 
     def plot_squiggle(scale=2, **kwargs):
