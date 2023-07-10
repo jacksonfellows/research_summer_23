@@ -97,6 +97,8 @@ def invert(
     nxc=125,
     nzc=80,
     ch2n=12,
+    xreg=15.0,
+    zreg=8.0,
 ):
     with tempfile.TemporaryDirectory() as tmp:
         wrappers.vm_tomo(
@@ -112,8 +114,8 @@ def invert(
             dz1=0.6,
             vscal=6.5,
             zscal=15.0,
-            xreg=15.0,
-            zreg=8.0,
+            xreg=xreg,
+            zreg=zreg,
             asr=2.5,  # I don't get this since it is not the ratio of xreg and zreg
             reg0=1.51,
             reg1=1.81,
