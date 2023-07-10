@@ -94,6 +94,9 @@ def invert(
     mask_path,
     itop,
     ibot,
+    nxc=125,
+    nzc=80,
+    ch2n=12,
 ):
     with tempfile.TemporaryDirectory() as tmp:
         wrappers.vm_tomo(
@@ -104,8 +107,8 @@ def invert(
             ibot=ibot,
             # taken from tomo.csh
             cmax=0.08,
-            nxc=125,
-            nzc=80,
+            nxc=nxc,
+            nzc=nzc,
             dz1=0.6,
             vscal=6.5,
             zscal=15.0,
@@ -116,7 +119,7 @@ def invert(
             reg1=1.81,
             reg2=1.51,
             crf=0.6,
-            ch2n=12,
+            ch2n=ch2n,
             vpmin=2.0,
             dwsv=dws_vel_path,
             dwsz=dws_zrf_path,
