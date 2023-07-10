@@ -10,8 +10,8 @@ import utils
 client = Client("IRIS")
 
 
-def download_earthquake(earthquake_row, component="Z"):
-    t1 = obspy.UTCDateTime(earthquake_row.origin_time)
+def download_earthquake(origin_time, component="Z"):
+    t1 = obspy.UTCDateTime(origin_time)
     t2 = t1 + 60
     quake_ns = str(t1.ns)
     target_dir = os.path.join(f"earthquakes_{component}", quake_ns)
