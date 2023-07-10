@@ -364,7 +364,7 @@ def make_model_map():
 
 def make_quake_map():
     fig = pygmt.Figure()
-    region = (-155.5, -150.5, 56, 59)
+    region = (-155, -150, 54.5, 58.5)
 
     # set area
     fig.basemap(projection="M12c", region=region, frame="a1f")
@@ -399,16 +399,29 @@ def make_quake_map():
     )
 
     # earthquakes
-    for i, row in utils._earthquake_df.iterrows():
+    fig.plot(
+        x=utils._earthquake_df.origin_longitude,
+        y=utils._earthquake_df.origin_latitude,
+        style="x0.4c",
+        pen="0.05c,red",
+    )
+    fig.text(
+        x=utils._earthquake_df.origin_longitude,
+        y=utils._earthquake_df.origin_latitude,
+        text=utils._earthquake_df.index,
+    )
+
+    # profile lines
+    for profile, color in (
+        (profile_info.profile_1, "saddlebrown"),
+        (profile_info.profile_2, "limegreen"),
+    ):
         fig.plot(
-            x=row.origin_longitude,
-            y=row.origin_latitude,
-            style="x0.4c",
-            pen="0.05c,red",
+            x=(profile.start_lat_lon[1], profile.end_lat_lon[1]),
+            y=(profile.start_lat_lon[0], profile.end_lat_lon[0]),
+            pen=f"0.06c,{color},4_4:4p",
+            label=profile.name,
         )
-        fig.text(x=row.origin_longitude, y=row.origin_latitude, text=f"{i}")
-        if i >= 10:
-            break
 
     # legend
     with pygmt.config(FONT="10"):
