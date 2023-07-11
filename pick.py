@@ -218,7 +218,7 @@ def pick_megashot(profile, shotno, shots_per_side, min_v, max_v):
         nonlocal picks
         picks = pick(bt, picks, mode="matrix", vmin=vmin, vmax=vmax, **kwargs)
 
-    def plot_raw(ylim, **kwargs):
+    def plot_raw(ylim=(0, 60), **kwargs):
         bt.plot_raw_mat(ylim, **kwargs)
 
     code.interact(
