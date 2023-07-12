@@ -359,6 +359,10 @@ def make_model_map():
     with pygmt.config(FONT="10"):
         fig.legend(position="JBL+jBL+o0.2c", box="+gwhite+p1p")
 
+    # scale
+    with pygmt.config(FONT="8"):
+        fig.basemap(map_scale="JBR+jBR+o0.5c/0.75+w50")
+
     fig.savefig(os.path.join(figs_dir, "model_map.pdf"))
 
 
