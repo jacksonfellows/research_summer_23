@@ -5,7 +5,7 @@ import rayfile
 
 
 def test_load_rayfile():
-    rays_loaded = rayfile.load("test_data/test_rayfile")
+    rays_loaded = rayfile.Rayfile.load("test_data/test_rayfile").rays()
     with open("test_data/test_rayfile_rays.pickle", "rb") as f:
         rays_pickled = pickle.load(f)
     assert all(
