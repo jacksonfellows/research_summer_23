@@ -9,6 +9,8 @@ import profile_info
 import velocity_model
 import rayfile
 
+from inversion_multi import trace_picks_multi
+
 
 def plot_vm_and_rays(vm_path, rayfile_path):
     vm = velocity_model.VMTOMO_VM.load(vm_path)
@@ -149,7 +151,7 @@ def run_inversion(
         rayfile_path = os.path.join(inversion_dir, f"rayfile_{n_iter:03}")
         if not os.path.exists(rayfile_path):
             print(f"raytracing for iteration {n_iter:03}")
-            trace_picks(profile, vm_path, picks, rayfile_path, drp=drp)
+            trace_picks_multi(profile, vm_path, picks, rayfile_path, drp=drp)
         else:
             print(f"rayfile {rayfile_path} already exists - skipping raytracing")
         new_vm_path = os.path.join(inversion_dir, f"vm_{n_iter+1:03}")
