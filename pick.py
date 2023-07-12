@@ -190,11 +190,13 @@ def load_picks(filename):
 
 def pick_megashot(profile, shotno, shots_per_side, min_v, max_v):
     pick_file = os.path.join("picks", f"megashot_{shotno}_{shots_per_side}_01")
-    if os.path.exists(pick_file):
-        raise ValueError(f"Pick file {pick_file} already exists!")
-    bt = megashot.megashot_all_nodes(shotno, shots_per_side, min_v, max_v)
 
     picks = None
+    if os.path.exists(pick_file):
+        print(f"Pick file {pick_file} already exists - loading existing picks!")
+        picks = load_picks(pick_file)
+
+    bt = megashot.megashot_all_nodes(shotno, shots_per_side, min_v, max_v)
 
     def reshoot(min_v, max_v):
         nonlocal bt
