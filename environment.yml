@@ -13,6 +13,7 @@ dependencies:
  - cartopy=0.21                 # need for obspy's built-in plotting
  - pytest=7.3
  - geographiclib=2.0
+ - python-lsp-server=1.7.4
+ - pyflakes=3.0.1
 platforms:
  - osx-arm64                    # M1
- - win-64
