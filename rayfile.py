@@ -20,17 +20,17 @@ class RayfileChunk:
 
 
 class Rayfile:
-    def __init__(self, num, chunks):
-        self.num = num
+    def __init__(self, num_chunks, chunks):
+        self.num_chunks = num_chunks
         self.chunks = chunks
 
     @classmethod
     def load(cls, filename):
         with open(filename, "rb") as f:
-            num = struct.unpack("<i", f.read(4))[0]  # number of rays
+            num_chunks = struct.unpack("<i", f.read(4))[0]  # number of chunks
             # Each chunk could have a different size so I can't just have a big array.
             chunks = []
-            for _ in range(num):
+            for _ in range(num_chunks):
                 inr = struct.unpack("<i", f.read(4))[0]  # instrument ID
                 npr = struct.unpack("<i", f.read(4))[0]  # number of picks
                 nrr = struct.unpack("<i", f.read(4))[0]  # number of ray points
@@ -51,7 +51,7 @@ class Rayfile:
                     RayfileChunk(inr, npr, nrr, isk, fas, ttp, etp, tca, len_, xry, zry)
                 )
 
-        return cls(num, chunks)
+        return cls(num_chunks, chunks)
 
     def rays(self):
         rays = []
