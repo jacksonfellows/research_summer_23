@@ -53,6 +53,22 @@ class Rayfile:
 
         return cls(num_chunks, chunks)
 
+    def dump(self, filename):
+        with open(filename, "wb") as f:
+            f.write(struct.pack("<i", self.num_chunks))
+            for chunk in self.chunks:
+                f.write(struct.pack("<i", chunk.inr))
+                f.write(struct.pack("<i", chunk.npr))
+                f.write(struct.pack("<i", chunk.nrr))
+                f.write(chunk.isk.tobytes())
+                f.write(chunk.fas.tobytes())
+                f.write(chunk.ttp.tobytes())
+                f.write(chunk.etp.tobytes())
+                f.write(chunk.tca.tobytes())
+                f.write(chunk.len_.tobytes())
+                f.write(chunk.xry.tobytes())
+                f.write(chunk.zry.tobytes())
+
     def rays(self):
         rays = []
         chunk: RayfileChunk
