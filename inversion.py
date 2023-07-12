@@ -12,7 +12,7 @@ import rayfile
 
 def plot_vm_and_rays(vm_path, rayfile_path):
     vm = velocity_model.VMTOMO_VM.load(vm_path)
-    rays = rayfile.load(rayfile_path)
+    rays = rayfile.Rayfile.load(rayfile_path).rays()
     vm.plot(show=False)
     for x, z in rays:
         plt.plot(x, z)
