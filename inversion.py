@@ -102,6 +102,10 @@ def invert(
     xreg=15.0,
     zreg=8.0,
     crf=1.0,
+    reg0=1,
+    reg1=1,
+    reg2=1,
+    dz1=0.1,
 ):
     wrappers.vm_tomo(
         vm_file=vm_path,
@@ -113,15 +117,15 @@ def invert(
         cmax=0.08,
         nxc=nxc,
         nzc=nzc,
-        dz1=0.1,
+        dz1=dz1,
         vscal=6.5,
         zscal=15.0,
         xreg=xreg,
         zreg=zreg,
         asr=xreg / zreg,
-        reg0=1,
-        reg1=1,
-        reg2=1,
+        reg0=reg0,
+        reg1=reg1,
+        reg2=reg2,
         crf=crf,
         ch2n=ch2n,
         vpmin=2.0,
@@ -133,7 +137,14 @@ def invert(
 
 
 def run_inversion(
-    profile, initial_vm, picks, inversion_dir, n_iters, drp=0.1, ch2n=16, **invert_kargs
+    profile,
+    initial_vm,
+    picks,
+    inversion_dir,
+    n_iters,
+    drp=0.1,
+    ch2n=16,
+    **invert_kwargs,
 ):
     # Keeps all the generated rayfiles and velocity models in the inversion_dir.
     n_iter = 0
@@ -166,7 +177,8 @@ def run_inversion(
                 os.path.join(inversion_dir, f"mask_{n_iter+1:03}"),
                 itop=picks.phase.min(),
                 ibot=picks.phase.max(),
-                **invert_kargs,
+                ch2n=ch2n,
+                **invert_kwargs,
             )
             if (
                 not os.path.exists(os.path.join(inversion_dir, f"vm_{n_iter+1:03}"))
