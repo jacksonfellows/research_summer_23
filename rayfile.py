@@ -80,3 +80,13 @@ class Rayfile:
                 )
                 start += l
         return rays
+
+
+def cat_rayfiles(input_paths, output_path):
+    num_chunks = 0
+    chunks = []
+    for path in input_paths:
+        rf = Rayfile.load(path)
+        num_chunks += rf.num_chunks
+        chunks.extend(rf.chunks)
+    Rayfile(num_chunks, chunks).dump(output_path)
