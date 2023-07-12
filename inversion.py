@@ -99,39 +99,39 @@ def invert(
     ch2n=12,
     xreg=15.0,
     zreg=8.0,
+    crf=1.0,
 ):
-    with tempfile.TemporaryDirectory() as tmp:
-        wrappers.vm_tomo(
-            vm_file=vm_path,
-            rayfile=rayfile_path,
-            # would be nice if these updated automatically
-            itop=itop,
-            ibot=ibot,
-            # taken from tomo.csh
-            cmax=0.08,
-            nxc=nxc,
-            nzc=nzc,
-            dz1=0.6,
-            vscal=6.5,
-            zscal=15.0,
-            xreg=xreg,
-            zreg=zreg,
-            asr=2.5,  # I don't get this since it is not the ratio of xreg and zreg
-            reg0=1.51,
-            reg1=1.81,
-            reg2=1.51,
-            crf=0.6,
-            ch2n=ch2n,
-            vpmin=2.0,
-            dwsv=dws_vel_path,
-            dwsz=dws_zrf_path,
-            mask_file=mask_path,
-            vmnew=new_vm_path,
-        )
+    wrappers.vm_tomo(
+        vm_file=vm_path,
+        rayfile=rayfile_path,
+        # would be nice if these updated automatically
+        itop=itop,
+        ibot=ibot,
+        # taken from tomo.csh
+        cmax=0.08,
+        nxc=nxc,
+        nzc=nzc,
+        dz1=0.1,
+        vscal=6.5,
+        zscal=15.0,
+        xreg=xreg,
+        zreg=zreg,
+        asr=xreg / zreg,
+        reg0=1,
+        reg1=1,
+        reg2=1,
+        crf=crf,
+        ch2n=ch2n,
+        vpmin=2.0,
+        dwsv=dws_vel_path,
+        dwsz=dws_zrf_path,
+        mask_file=mask_path,
+        vmnew=new_vm_path,
+    )
 
 
 def run_inversion(
-    profile, initial_vm, picks, inversion_dir, n_iters, drp=0.1, **invert_kargs
+    profile, initial_vm, picks, inversion_dir, n_iters, drp=0.1, ch2n=16, **invert_kargs
 ):
     # Keeps all the generated rayfiles and velocity models in the inversion_dir.
     n_iter = 0
@@ -139,10 +139,10 @@ def run_inversion(
     # Get started with initial vm.
     vm_path = os.path.join(inversion_dir, f"vm_{n_iter:03}")
     if not os.path.exists(vm_path):
-        print(f"dumping initial velocity model")
+        print("dumping initial velocity model")
         initial_vm.dump(vm_path)
     else:
-        print(f"initial velocity model already exists - skipping dumping")
+        print("initial velocity model already exists - skipping dumping")
 
     while n_iter < n_iters:
         vm_path = os.path.join(inversion_dir, f"vm_{n_iter:03}")
@@ -154,7 +154,7 @@ def run_inversion(
             print(f"rayfile {rayfile_path} already exists - skipping raytracing")
         new_vm_path = os.path.join(inversion_dir, f"vm_{n_iter+1:03}")
         if not os.path.exists(new_vm_path):
-            print(f"inverting for iteration {n_iter:03}")
+            print(f"inverting for iteration {n_iter:03} w/ {ch2n=}")
             invert(
                 vm_path,
                 rayfile_path,
@@ -174,6 +174,8 @@ def run_inversion(
                 raise RuntimeError(
                     "Inversion failed! (did not produce a new velocity model)"
                 )
+            ch2n = max(1, ch2n / 2)
+            print(f"updated {ch2n=}")
         else:
             print(f"velocity model {new_vm_path} already exists - skipping inversion")
         n_iter += 1
