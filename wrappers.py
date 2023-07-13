@@ -56,7 +56,9 @@ def vm_trace(
         ]:
             input_f.write(f"{arg}\n")
         input_f.seek(0)
-        subprocess.Popen("./fortran_codes/vm_trace", stdin=input_f).wait()
+        subprocess.Popen(
+            "./fortran_codes/vm_trace", stdin=input_f, stdout=subprocess.DEVNULL
+        ).wait()
 
 
 def vm_tomo(
