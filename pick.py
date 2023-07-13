@@ -68,7 +68,7 @@ def pick(
 ):
     if mode == "matrix":
         fig, axs = bt.plot_mat(
-            show=False, red_vel=red_vel, ylim=ylim, vmin=vmin, vmax=None
+            show=False, red_vel=red_vel, ylim=ylim, vmin=vmin, vmax=vmax
         )
     elif mode == "squiggle":
         fig, axs = bt.plot(show=False, red_vel=red_vel, ylim=ylim, scale=scale)
@@ -216,9 +216,9 @@ def pick_megashot(profile, shotno, shots_per_side, min_v, max_v, stacking="mean"
         nonlocal picks
         picks = pick(bt, picks, mode="squiggle", scale=scale, **kwargs)
 
-    def plot_matrix(vmin=0, vmax=1, **kwargs):
+    def plot_matrix(**kwargs):
         nonlocal picks
-        picks = pick(bt, picks, mode="matrix", vmin=vmin, vmax=vmax, **kwargs)
+        picks = pick(bt, picks, mode="matrix", **kwargs)
 
     def plot_raw(ylim=(0, 60), **kwargs):
         bt.plot_raw_mat(ylim, **kwargs)
