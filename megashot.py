@@ -123,7 +123,7 @@ def megashot(center_shot, node_code, shots_per_side, show=True):
         plt.show()
 
 
-def megashot_all_nodes(center_shot, shots_per_side, min_v, max_v):
+def megashot_all_nodes(center_shot, shots_per_side, min_v, max_v, stacking="mean"):
     # First load all the shots.
     shotnos = range(center_shot - shots_per_side, center_shot + shots_per_side + 1)
     shot_sts = {}
@@ -173,7 +173,7 @@ def megashot_all_nodes(center_shot, shots_per_side, min_v, max_v):
             == t0.stats.segy.trace_header.trace_number_within_the_original_field_record
             for t in ts
         )
-        t_stacked = np.zeros(t0.data.shape)
+        shifted_ts = np.zeros((len(ts), t0.data.shape[0]))
 
         for i, t_ in enumerate(ts):
             offset1_m = utils.source_receiver_offset(t0)
@@ -190,14 +190,20 @@ def megashot_all_nodes(center_shot, shots_per_side, min_v, max_v):
             )
             lag = lags[np.argmax(correlation_masked)]
             if lag == 0:
-                t_stacked += t_
+                shifted_ts[i] += t_
             elif lag > 0:
                 # shift t_ to the left
-                t_stacked[:-lag] += t_[lag:]
+                shifted_ts[i][:-lag] += t_[lag:]
             else:
                 # shift t_ to the right
-                t_stacked[-lag:] += t_[:lag]
+                shifted_ts[i][-lag:] += t_[:lag]
 
-        bt.add_trace(t_stacked / len(shotnos), 1e-3 * utils.source_receiver_offset(t0))
+        if stacking == "mean":
+            t_stacked = np.mean(shifted_ts, axis=0)
+        elif stacking == "median":
+            t_stacked = np.median(shifted_ts, axis=0)
+        else:
+            raise ValueError(f"unsupported stacking option {stacking}")
+        bt.add_trace(t_stacked, 1e-3 * utils.source_receiver_offset(t0))
 
     return bt

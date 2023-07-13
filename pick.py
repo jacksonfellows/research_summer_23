@@ -188,7 +188,7 @@ def load_picks(filename):
     )
 
 
-def pick_megashot(profile, shotno, shots_per_side, min_v, max_v):
+def pick_megashot(profile, shotno, shots_per_side, min_v, max_v, stacking="mean"):
     pick_file = os.path.join("picks", f"megashot_{shotno}_{shots_per_side}_01")
 
     picks = None
@@ -196,11 +196,11 @@ def pick_megashot(profile, shotno, shots_per_side, min_v, max_v):
         print(f"Pick file {pick_file} already exists - loading existing picks!")
         picks = load_picks(pick_file)
 
-    bt = megashot.megashot_all_nodes(shotno, shots_per_side, min_v, max_v)
+    bt = megashot.megashot_all_nodes(shotno, shots_per_side, min_v, max_v, stacking)
 
     def reshoot(min_v, max_v):
         nonlocal bt
-        bt = megashot.megashot_all_nodes(shotno, shots_per_side, min_v, max_v)
+        bt = megashot.megashot_all_nodes(shotno, shots_per_side, min_v, max_v, stacking)
 
     def guess_picks(min_red_tt, max_red_tt, st_s=0.002, lt_s=0.2, threshold=4.0):
         nonlocal picks
