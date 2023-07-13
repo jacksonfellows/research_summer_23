@@ -1,3 +1,6 @@
+I should review my existing picks with the median stacking and see if they still make sense.
+Might be cleaner to write the pick file with only e.g. 2-3 digits after the decimal point.
+
 * "A" picks
 I feel pretty good about these.
 ** =megashot_996_5_01=
@@ -35,7 +38,12 @@ I feel pretty good about these.
 ** =megashot_1090_10_01=
 ** =megashot_1100_10_01=
 ** =megashot_1110_10_01=
+** =megashot_1115_5_01=
 ** =megashot_1345_5_01=
 ** =megashot_1350_5_01=
+Modified a bit with median stacking.
 ** =megashot_1355_5_01=
 Could pick some more here (esp. for closer offsets).
+* "B" picks
+Not so sure.
+** =megashot_1340_5_01=
