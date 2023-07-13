@@ -81,15 +81,16 @@ def pick(
     xs = []
     ys = []
     ts = []
+    errors = []
 
-    error = 0.1  # constant for now
+    pick_error = 0.1  # constant for now
 
     def redraw():
         ax_overlay.clear()
         ax_overlay.errorbar(
             xs,
             ys,
-            yerr=error,
+            yerr=errors,
             capsize=5,
             elinewidth=2,
             markeredgewidth=2,
@@ -108,6 +109,7 @@ def pick(
         xs = list(picks_df.offset[in_bounds])
         ys = list(red_tts[in_bounds])
         ts = list(picks_df.tt[in_bounds])
+        errors = list(picks_df.error[in_bounds])
         redraw()
 
     def onclick_callback(event):
@@ -120,16 +122,19 @@ def pick(
                 xs.pop(i)
                 ys.pop(i)
                 ts.pop(i)
+                errors.pop(i)
             xs.append(offset)
             ys.append(red_time)
             ts.append(time)
-            print(f"picked {offset:0.2f} km, {time:0.2f} s")
+            errors.append(pick_error)
+            print(f"picked {offset:0.2f} km, {time:0.2f} s, err={pick_error:0.2f}")
             redraw()
         elif event.key == "control":
             i = xs.index(offset)
             xs.pop(i)
             ys.pop(i)
             time = ts.pop(i)
+            errors.pop(i)
             print(f"deleted pick {offset:0.2f} km, {time:0.2f} s")
             redraw()
 
@@ -137,7 +142,7 @@ def pick(
 
     plt.show()
 
-    return pd.DataFrame({"offset": xs, "tt": ts, "error": error})
+    return pd.DataFrame({"offset": xs, "tt": ts, "error": errors})
 
 
 def fake_station_number(x_km):
