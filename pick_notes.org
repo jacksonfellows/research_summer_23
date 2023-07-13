@@ -1,6 +1,9 @@
 I should review my existing picks with the median stacking and see if they still make sense.
 Might be cleaner to write the pick file with only e.g. 2-3 digits after the decimal point.
 
+* Questions to ask
+What's going on with the first arrival at close offsets around 1070? How should I pick it?
+
 * "A" picks
 I feel pretty good about these.
 ** =megashot_996_5_01=
@@ -29,13 +32,31 @@ I feel pretty good about these.
 ** =megashot_1019_5_01=
 ** =megashot_1020_5_01=
 ** =megashot_1025_5_01=
+Updated w/ median.
 ** =megashot_1030_5_01=
+Updated w/ median.
 ** =megashot_1045_5_01=
+Updated w/ median. Very off.
 ** =megashot_1050_5_01=
+Updated w/ median.
 ** =megashot_1055_5_01=
+Updated w/ median.
 ** =megashot_1060_5_01=
+Updated w/ median.
+** =megashot_1065_5_01=
+Made w/ median.
+** =megashot_1070_5_01=
+Made w/ median. Weird first arrival that comes before the main bands
+at close offsets. I picked it.
 ** =megashot_1080_5_01=
-** =megashot_1090_10_01=
+Updated w/ median. Also confused about first arrival at close offsets.
+It's not as prominent here as in 1070. I picked the most clear arrival.
+** =megashot_1085_5_01=
+Made w/ median. Also confusing at close offsets went with what was clearest.
+** =megashot_1090_5_01=
+Updated w/ median. Switched from 10/side to 5/side. Close offsets a little confusing.
+** =megashot_1095_5_01=
+Made w/ median.
 ** =megashot_1100_10_01=
 ** =megashot_1110_10_01=
 ** =megashot_1115_5_01=
