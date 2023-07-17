@@ -7,6 +7,18 @@ import glob
 import itertools
 
 
+def load_node(station_code, lineno):
+    stream = obspy.read(
+        os.path.join(f"line_{lineno}_per_station", f"{station_code}.segy"),
+        unpack_trace_headers=True,
+    )
+    return stream
+
+
+def load_broadband(station_code, lineno):
+    stream = obspy.read(
+        os.path.join(f"line_{lineno}_per_broadband", f"{station_code}.sac")
+    )
     return stream
 
 
