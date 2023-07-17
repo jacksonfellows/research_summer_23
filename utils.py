@@ -16,8 +16,10 @@ def load_node(station_code, lineno):
 
 
 def load_broadband(station_code, lineno):
+    # Assumes broadband shots have already been trimmed to so that the
+    # start time of each trace is accurate.
     stream = obspy.read(
-        os.path.join(f"line_{lineno}_per_broadband", f"{station_code}.sac")
+        os.path.join(f"line_{lineno}_per_broadband", f"{station_code}.pickle")
     )
     return stream
 
@@ -96,6 +98,11 @@ def source_receiver_offset(tr):
         *node_lat_lon(stat_code), *shot_lat_lon(shotno)
     )
     return dist_m
+
+
+def broadband_lat_lon(station_code):
+    row = _broadband_df[_broadband_df.code == station_code].iloc[0]
+    return (row.lat, row.lon)
 
 
 def agc(tr, window_len):
