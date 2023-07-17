@@ -144,6 +144,7 @@ def run_inversion(
     n_iters,
     drp=0.1,
     ch2n=16,
+    ch2n_factor=0.5,
     **invert_kwargs,
 ):
     # Keeps all the generated rayfiles and velocity models in the inversion_dir.
@@ -188,7 +189,7 @@ def run_inversion(
                 raise RuntimeError(
                     "Inversion failed! (did not produce a new velocity model)"
                 )
-            ch2n = max(1, ch2n / 2)
+            ch2n = max(1, ch2n_factor * ch2n)
             print(f"updated {ch2n=}")
         else:
             print(f"velocity model {new_vm_path} already exists - skipping inversion")
