@@ -1,15 +1,15 @@
+import functools
+import struct
+
 import numpy as np
 import pandas as pd
-import struct
-from matplotlib import pyplot as plt
 import pygmt
-import functools
-from obspy.clients.fdsn.client import Client
 import scipy
+from matplotlib import pyplot as plt
+from obspy.clients.fdsn.client import Client
 
-
-import utils
 import profile_info
+import utils
 
 
 class VMTOMO_VM:

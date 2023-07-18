@@ -1,5 +1,5 @@
-import velocity_model
 import profile_info
+import velocity_model
 
 # Make sure we can load test_01.vm.
 

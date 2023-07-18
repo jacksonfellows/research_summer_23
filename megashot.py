@@ -1,12 +1,12 @@
 import numpy as np
 import obspy
-import obspy.signal.trigger
 import obspy.signal.filter
-from matplotlib import pyplot as plt
+import obspy.signal.trigger
 import scipy
+from matplotlib import pyplot as plt
 
-import utils
 import binned
+import utils
 
 
 def load_trace(per_shot_st, node_code):

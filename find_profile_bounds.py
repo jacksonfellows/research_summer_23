@@ -1,7 +1,6 @@
 import numpy as np
 import pygmt
 from geographiclib.geodesic import Geodesic
-import pygmt
 
 import utils
 

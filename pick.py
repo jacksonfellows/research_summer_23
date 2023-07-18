@@ -1,18 +1,19 @@
-import pandas as pd
-import numpy as np
-from matplotlib import pyplot as plt
-from copy import deepcopy
-import obspy.signal.trigger
-import datetime
-import tempfile
-import os
 import code
+import datetime
+import os
+import tempfile
+from copy import deepcopy
+
+import numpy as np
+import obspy.signal.trigger
+import pandas as pd
+from matplotlib import pyplot as plt
 
 import binned
+import megashot
 import profile_info
 import rayfile
 import wrappers
-import megashot
 
 
 def threshold_picker(bt, threshold):

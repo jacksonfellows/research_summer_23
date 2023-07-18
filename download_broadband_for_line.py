@@ -1,6 +1,7 @@
+import os
+
 import obspy
 from obspy.clients.fdsn.client import Client
-import os
 
 import utils
 

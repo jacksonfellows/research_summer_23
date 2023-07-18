@@ -1,14 +1,14 @@
-from matplotlib import pyplot as plt
-import tempfile
-import os
 import datetime
+import os
+import tempfile
 
-import wrappers
+from matplotlib import pyplot as plt
+
 import pick
 import profile_info
-import velocity_model
 import rayfile
-
+import velocity_model
+import wrappers
 from inversion_multi import trace_picks_multi
 
 

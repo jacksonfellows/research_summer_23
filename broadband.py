@@ -1,8 +1,8 @@
 import numpy as np
 import obspy
 
-import utils
 import unbinned
+import utils
 
 
 def make_unbinned_traces(station_code, lineno):

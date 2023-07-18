@@ -1,9 +1,11 @@
+import os
+
 import numpy as np
-from matplotlib import pyplot as plt
-import utils
 import obspy
 import obspy.signal.trigger
-import os
+from matplotlib import pyplot as plt
+
+import utils
 
 
 def plot_stream(st, title, fname):

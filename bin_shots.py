@@ -1,15 +1,16 @@
 # TODO: clean this up
 # Probably should store the sampling rate in the BinnedTraces object.
 
-import numpy as np
-import obspy
-import obspy.signal.trigger
-import obspy.signal.filter
-from matplotlib import pyplot as plt
 import pickle
 
-import utils
+import numpy as np
+import obspy
+import obspy.signal.filter
+import obspy.signal.trigger
+from matplotlib import pyplot as plt
+
 import binned
+import utils
 
 
 def load_binned_traces(path):

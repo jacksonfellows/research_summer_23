@@ -1,8 +1,8 @@
-import obspy
-from obspy.clients.fdsn.client import Client
-import obspy.signal.trigger
-import obspy.signal.filter
 import numpy as np
+import obspy
+import obspy.signal.filter
+import obspy.signal.trigger
+from obspy.clients.fdsn.client import Client
 
 import utils
 

@@ -1,9 +1,10 @@
-import pandas as pd
-import obspy
-from obspy.clients.fdsn.client import Client
+import os
 import urllib
 import zipfile
-import os
+
+import obspy
+import pandas as pd
+from obspy.clients.fdsn.client import Client
 
 import utils
 

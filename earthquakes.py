@@ -3,8 +3,8 @@ import obspy
 import obspy.signal.filter
 import obspy.signal.trigger
 
-import utils
 import binned
+import utils
 
 
 def quake_node_offset_km(quake_ns, node_code):

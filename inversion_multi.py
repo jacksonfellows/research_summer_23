@@ -1,9 +1,9 @@
-import tempfile, multiprocessing
+import multiprocessing
+import tempfile
 
-import profile_info
 import pick
+import profile_info
 import rayfile
-
 # Need to have the function to map over defined in a separate file.
 from inversion_multi_trace_station import trace_station
 

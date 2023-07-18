@@ -1,11 +1,11 @@
-import pygmt
 import os
+
 import geopandas
 import pandas as pd
+import pygmt
 
-import utils
 import profile_info
-
+import utils
 
 figs_dir = "figures"
 

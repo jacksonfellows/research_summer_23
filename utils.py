@@ -1,10 +1,11 @@
-import numpy as np
-import scipy
-import obspy
-import pandas as pd
-import os
 import glob
 import itertools
+import os
+
+import numpy as np
+import obspy
+import pandas as pd
+import scipy
 
 
 def load_node(station_code, lineno):

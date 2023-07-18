@@ -1,6 +1,6 @@
+import os
 import urllib.request
 import zipfile
-import os
 
 
 def download_shot(shotid):

@@ -1,7 +1,8 @@
 # Helper to cleanup the .tsv returned by the NOAA service (https://www.ngdc.noaa.gov/hazel/view/hazards/volcano/loc-search).
 
-import pandas as pd
 import os
+
+import pandas as pd
 
 
 def cleanup_tsv(filename):

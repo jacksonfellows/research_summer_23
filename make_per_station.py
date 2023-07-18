@@ -1,6 +1,7 @@
-import obspy
 import collections
 import os
+
+import obspy
 
 import utils
 

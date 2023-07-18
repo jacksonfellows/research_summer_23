@@ -1,6 +1,9 @@
-import os, datetime
+import datetime
+import os
 
-import pick, wrappers, rayfile
+import pick
+import rayfile
+import wrappers
 
 
 def trace_station(trace_args):

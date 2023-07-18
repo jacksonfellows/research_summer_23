@@ -1,6 +1,7 @@
-import numpy as np
 import struct
 from dataclasses import dataclass
+
+import numpy as np
 
 
 @dataclass

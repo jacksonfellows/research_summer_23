@@ -1,8 +1,10 @@
 from dataclasses import dataclass
-import utils
+
 import numpy as np
 import pandas as pd
 import pygmt
+
+import utils
 
 
 @dataclass

@@ -1,7 +1,8 @@
-import numpy as np
+import os
 import pickle
 import tempfile
-import os
+
+import numpy as np
 
 import rayfile
 

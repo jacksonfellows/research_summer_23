@@ -1,7 +1,7 @@
 import numpy as np
 
-import utils
 import unbinned
+import utils
 
 
 def make_unbinned_traces(node_code, lineno):
