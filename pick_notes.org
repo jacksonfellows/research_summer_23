@@ -68,3 +68,7 @@ Could pick some more here (esp. for closer offsets).
 * "B" picks
 Not so sure.
 ** =megashot_1340_5_01=
+* Still working
+** =broadband_KD01_01=
+Picked first arrival where clear (close offsets) from bandpass 3-15 Hz.
+Need to confirm if I'm picking "real" waveforms correctly.

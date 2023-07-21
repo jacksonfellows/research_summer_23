@@ -29,3 +29,9 @@ class UnbinnedTraces:
             ax.fill_betweenx(y, x, z, where=x > z, facecolor="k")
         if show:
             plt.show()
+        else:
+            return fig, [ax]
+
+    def round_to_bin(self, offset):
+        # Really round to trace.
+        return min(self.offsets, key=lambda x: abs(offset - x))

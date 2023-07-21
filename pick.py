@@ -10,9 +10,11 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 import binned
+import broadband
 import megashot
 import profile_info
 import rayfile
+import utils
 import wrappers
 
 
@@ -60,6 +62,7 @@ def sta_lta_binned(old_bt, st_s, lt_s):
 def pick(
     bt,
     picks_df=None,
+    pick_error=0.1,
     mode="matrix",
     red_vel=6.0,
     ylim=(-2, 8),
@@ -83,8 +86,6 @@ def pick(
     ys = []
     ts = []
     errors = []
-
-    pick_error = 0.1  # constant for now
 
     def redraw():
         ax_overlay.clear()
@@ -204,6 +205,8 @@ def pick_megashot(profile, shotno, shots_per_side, min_v, max_v, stacking="mean"
 
     bt = megashot.megashot_all_nodes(shotno, shots_per_side, min_v, max_v, stacking)
 
+    pick_error = 0.1
+
     def reshoot(min_v, max_v):
         nonlocal bt
         bt = megashot.megashot_all_nodes(shotno, shots_per_side, min_v, max_v, stacking)
@@ -220,11 +223,13 @@ def pick_megashot(profile, shotno, shots_per_side, min_v, max_v, stacking="mean"
 
     def plot_squiggle(scale=2, **kwargs):
         nonlocal picks
-        picks = pick(bt, picks, mode="squiggle", scale=scale, **kwargs)
+        picks = pick(
+            bt, picks, pick_error=pick_error, mode="squiggle", scale=scale, **kwargs
+        )
 
     def plot_matrix(**kwargs):
         nonlocal picks
-        picks = pick(bt, picks, mode="matrix", **kwargs)
+        picks = pick(bt, picks, pick_error=pick_error, mode="matrix", **kwargs)
 
     def plot_raw(ylim=(0, 60), **kwargs):
         bt.plot_raw_mat(ylim, **kwargs)
@@ -237,5 +242,63 @@ def pick_megashot(profile, shotno, shots_per_side, min_v, max_v, stacking="mean"
             "save": _save_picks,
             "reshoot": reshoot,
             "plot_raw": plot_raw,
+        }
+    )
+
+
+def broadband_station_code_to_number(station_code):
+    return {
+        "KD01": 1,
+    }[station_code]
+
+
+def make_broadband_pick_file(station_code, phase, picks):
+    # Need to recover shot numbers.
+    shot_offsets = {
+        1e-3
+        * obspy.geodetics.gps2dist_azimuth(
+            *utils.broadband_lat_lon(station_code), *utils.shot_lat_lon(shotno)
+        )[0]: shotno
+        for shotno in utils.shots_for_line(1)
+    }
+    shots = [shot_offsets[offset] for offset in picks.offset]
+    return pd.DataFrame(
+        {
+            "station": broadband_station_code_to_number(station_code),
+            "shot": shots,
+            "phase": phase,
+            "offset": picks.offset,
+            "tt": picks.tt,
+            "error": picks.error,
+        }
+    )
+
+
+def pick_broadband(station_code):
+    # Assume profile 1
+
+    pick_file = os.path.join("picks", f"broadband_{station_code}_01")
+
+    picks = None
+    if os.path.exists(pick_file):
+        print(f"Pick file {pick_file} already exists - loading existing picks!")
+        picks = load_picks(pick_file)
+
+    traces = broadband.make_unbinned_traces(station_code, 1)
+
+    pick_error = 0.04
+
+    def plot_squiggle(**kwargs):
+        nonlocal picks
+        picks = pick(traces, picks, pick_error=pick_error, mode="squiggle", **kwargs)
+
+    def _save_picks(phase):
+        print(f"saving {len(picks)} picks to {pick_file} with {phase=}")
+        save_picks(make_broadband_pick_file(station_code, phase, picks), pick_file)
+
+    code.interact(
+        local={
+            "plot": plot_squiggle,
+            "save": _save_picks,
         }
     )
