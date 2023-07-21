@@ -4,6 +4,7 @@ import tempfile
 import pick
 import profile_info
 import rayfile
+
 # Need to have the function to map over defined in a separate file.
 from inversion_multi_trace_station import trace_station
 
@@ -25,6 +26,7 @@ def trace_picks_multi(profile, vm_path, picks, rayfile_path, drp=0.1):
                         "all_shots": all_shots,
                         "vm_path": vm_path,
                         "drp": drp,
+                        "profile": profile,
                     }
                     for station in stations
                 ],

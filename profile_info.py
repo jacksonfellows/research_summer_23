@@ -44,6 +44,18 @@ class Profile:
             }
         )
 
+    def project_broadband(self, station_code):
+        df = utils._broadband_df[utils._broadband_df.code == station_code]
+        broadband_locs = np.column_stack((df.lon, df.lat, df.elev_m))
+        projected = pygmt.project(
+            data=broadband_locs,
+            center=(self.start_lat_lon[1], self.start_lat_lon[0]),
+            endpoint=(self.end_lat_lon[1], self.end_lat_lon[0]),
+            unit=True,
+        )
+        x, y, z = projected[3][0], projected[4][0], 1e-3 * projected[2][0]
+        return x, y, z
+
 
 profile_1 = Profile(
     start_lat_lon=(57.953815, -152.717426),

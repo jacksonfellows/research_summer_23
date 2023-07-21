@@ -183,6 +183,7 @@ def save_picks(picks, filename):
         sep=" ",
         header=False,
         index=False,
+        float_format="%.3f",
     )
 
 
@@ -246,22 +247,34 @@ def pick_megashot(profile, shotno, shots_per_side, min_v, max_v, stacking="mean"
     )
 
 
+broadband_numbers_code = (("KD01", 1),)
+
+
 def broadband_station_code_to_number(station_code):
-    return {
-        "KD01": 1,
-    }[station_code]
+    return (
+        int(2e6)
+        + [num for code, num in broadband_numbers_code if code == station_code][0]
+    )
+
+
+def broadband_number_to_station_code(station):
+    broadband_number = station - int(2e6)
+    return [code for code, num in broadband_numbers_code if num == broadband_number][0]
 
 
 def make_broadband_pick_file(station_code, phase, picks):
     # Need to recover shot numbers.
     shot_offsets = {
-        1e-3
-        * obspy.geodetics.gps2dist_azimuth(
-            *utils.broadband_lat_lon(station_code), *utils.shot_lat_lon(shotno)
-        )[0]: shotno
+        round(
+            1e-3
+            * obspy.geodetics.gps2dist_azimuth(
+                *utils.broadband_lat_lon(station_code), *utils.shot_lat_lon(shotno)
+            )[0],
+            3,
+        ): shotno
         for shotno in utils.shots_for_line(1)
     }
-    shots = [shot_offsets[offset] for offset in picks.offset]
+    shots = [shot_offsets[round(offset, 3)] for offset in picks.offset]
     return pd.DataFrame(
         {
             "station": broadband_station_code_to_number(station_code),

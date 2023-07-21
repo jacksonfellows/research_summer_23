@@ -2,6 +2,7 @@ import datetime
 import os
 
 import pick
+import profile_info
 import rayfile
 import wrappers
 
@@ -14,6 +15,7 @@ def trace_station(trace_args):
     all_shots = trace_args["all_shots"]
     vm_path = trace_args["vm_path"]
     drp = trace_args["drp"]
+    profile: profile_info.Profile = trace_args["profile"]
 
     # Need unique paths for each station
     pick_path = os.path.join(tmp, f"p_{station}")
@@ -38,9 +40,15 @@ def trace_station(trace_args):
         index=False,
     )
 
-    assert len(str(station)) == 7 and str(station)[0] == "1"
-    station_x = pick.fake_station_offset_km(station)
-    station_z = 0
+    assert len(str(station)) == 7
+    if str(station)[0] == "1":
+        # fake station
+        station_x = pick.fake_station_offset_km(station)
+        station_z = 0
+    elif str(station)[0] == "2":
+        # broadband
+        station_code = pick.broadband_number_to_station_code(station)
+        station_x, _, station_z = profile.project_broadband(station_code)
 
     # Use seconds in current day - seconds since epoch
     # overflows 32-bit (?) int in vm_trace :(.
