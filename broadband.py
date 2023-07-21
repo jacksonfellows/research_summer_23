@@ -5,9 +5,9 @@ import unbinned
 import utils
 
 
-def make_unbinned_traces(station_code, lineno):
+def make_unbinned_traces(station_code, lineno, freqmin=3, freqmax=15):
     st = utils.load_broadband(station_code, lineno)
-    st.filter("bandpass", freqmin=3, freqmax=20)
+    st.filter("bandpass", freqmin=freqmin, freqmax=freqmax)
     offsets = [
         1e-3
         * obspy.geodetics.gps2dist_azimuth(
