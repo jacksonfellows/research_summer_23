@@ -6,7 +6,14 @@ from obspy.clients.fdsn.client import Client
 import utils
 
 
-def download_broadband_for_line(station_code, lineno, window=(0, 60)):
+def download_broadband_for_line(
+    station_code,
+    lineno,
+    window=(0, 60),
+    network="XO",
+    channel="HHZ",  # high period, high gain seismometer, vertical component
+    location="*",
+):
     client = Client("IRIS")
     st_all = obspy.Stream()
     inv = None
@@ -15,10 +22,10 @@ def download_broadband_for_line(station_code, lineno, window=(0, 60)):
         t1 = shot_t + window[0]
         t2 = shot_t + window[1]
         get_params = {
-            "network": "XO",
+            "network": network,
             "station": station_code,
-            "location": "*",
-            "channel": "HHZ",  # high period, high gain seismometer, vertical component
+            "location": location,
+            "channel": channel,
             "starttime": t1,
             "endtime": t2,
         }
@@ -32,7 +39,7 @@ def download_broadband_for_line(station_code, lineno, window=(0, 60)):
         if inv is None:
             inv = client.get_stations(**get_params, level="response")
         st.remove_response(inventory=inv, output="VEL")
-        print(f"trimming stream")
+        print("trimming stream")
         st.trim(t1, t2, pad=True, fill_value=0, nearest_sample=False)
         # Save shotno with trace.
         st[0].stats.shotno = shot_row.shotno
