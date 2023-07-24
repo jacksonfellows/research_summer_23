@@ -16,6 +16,7 @@ import profile_info
 import rayfile
 import utils
 import wrappers
+from pickfile import load_picks, save_picks
 
 
 def threshold_picker(bt, threshold):
@@ -173,26 +174,6 @@ def make_pick_file(profile, shotno, phase, picks):
             "tt": picks.tt,
             "error": picks.error,
         }
-    )
-
-
-def save_picks(picks, filename):
-    picks.to_csv(
-        filename,
-        columns=["station", "shot", "phase", "offset", "tt", "error"],
-        sep=" ",
-        header=False,
-        index=False,
-        float_format="%.3f",
-    )
-
-
-def load_picks(filename):
-    return pd.read_csv(
-        filename,
-        names=["station", "shot", "phase", "offset", "tt", "error"],
-        sep=" ",
-        header=None,
     )
 
 
