@@ -196,7 +196,7 @@ def load_picks(filename):
     )
 
 
-def pick_megashot(profile, shotno, shots_per_side, min_v, max_v, stacking="mean"):
+def pick_megashot(shotno, shots_per_side, min_v, max_v, stacking="mean"):
     pick_file = os.path.join("picks", f"megashot_{shotno}_{shots_per_side}_01")
 
     picks = None
@@ -220,7 +220,9 @@ def pick_megashot(profile, shotno, shots_per_side, min_v, max_v, stacking="mean"
 
     def _save_picks(phase):
         print(f"saving {len(picks)} picks to {pick_file} with {phase=}")
-        save_picks(make_pick_file(profile, shotno, phase, picks), pick_file)
+        save_picks(
+            make_pick_file(profile_info.profile_1, shotno, phase, picks), pick_file
+        )
 
     def plot_squiggle(scale=2, **kwargs):
         nonlocal picks
