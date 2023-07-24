@@ -2,6 +2,7 @@ import struct
 from dataclasses import dataclass
 
 import numpy as np
+import pandas as pd
 
 
 @dataclass
@@ -28,22 +29,22 @@ class Rayfile:
     @classmethod
     def load(cls, filename):
         with open(filename, "rb") as f:
-            num_chunks = struct.unpack("<i", f.read(4))[0]  # number of chunks
+            num_chunks = struct.unpack("<i", f.read(4))[0]  # Number of chunks
             # Each chunk could have a different size so I can't just have a big array.
             chunks = []
             for _ in range(num_chunks):
-                inr = struct.unpack("<i", f.read(4))[0]  # instrument ID
-                npr = struct.unpack("<i", f.read(4))[0]  # number of picks
-                nrr = struct.unpack("<i", f.read(4))[0]  # number of ray points
-                # Not sure what these are for.
-                # Shot number?
+                inr = struct.unpack("<i", f.read(4))[0]  # Instrument ID
+                npr = struct.unpack("<i", f.read(4))[0]  # Number of picks
+                nrr = struct.unpack("<i", f.read(4))[0]  # Number of ray points
+                # Shot number
                 isk = np.frombuffer(f.read(4 * npr), dtype="<i")
+                # Phase
                 fas = np.frombuffer(f.read(4 * npr), dtype="<i")
-                # Picked travel time?
+                # Picked travel time
                 ttp = np.frombuffer(f.read(4 * npr), dtype="<f")
-                # Error in pick?
+                # Error in pick
                 etp = np.frombuffer(f.read(4 * npr), dtype="<f")
-                # Calculated travel time?
+                # Calculated travel time
                 tca = np.frombuffer(f.read(4 * npr), dtype="<f")
                 len_ = np.frombuffer(f.read(4 * npr), dtype="<i")
                 xry = np.frombuffer(f.read(4 * nrr), "<f")
@@ -81,6 +82,32 @@ class Rayfile:
                 )
                 start += l
         return rays
+
+    def calculated_tts(self):
+        # Goal is to return enough info to draw travel-time curves.
+        stations = []
+        shots = []
+        phases = []
+        tt_picks = []
+        tt_calcs = []
+        errors = []
+        for chunk in self.chunks:
+            stations.extend(chunk.npr * [chunk.inr])
+            shots.extend(chunk.isk)
+            phases.extend(chunk.fas)
+            tt_picks.extend(chunk.ttp)
+            tt_calcs.extend(chunk.tca)
+            errors.extend(chunk.etp)
+        return pd.DataFrame(
+            {
+                "station": stations,
+                "shot": shots,
+                "phase": phases,
+                "tt": tt_picks,
+                "tt_calc": tt_calcs,
+                "error": errors,
+            }
+        )
 
 
 def cat_rayfiles(input_paths, output_path):
