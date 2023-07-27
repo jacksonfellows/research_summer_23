@@ -60,6 +60,9 @@ Made w/ median.
 ** =megashot_1100_10_01=
 ** =megashot_1110_10_01=
 ** =megashot_1115_5_01=
+** =megashot_1287_5_01=
+Chose to do this shot bc it looked good in quick megashot plots.
+Maybe don't need 0.2 s uncertainty.
 ** =megashot_1345_5_01=
 ** =megashot_1350_5_01=
 Modified a bit with median stacking.
