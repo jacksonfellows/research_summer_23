@@ -43,6 +43,10 @@ Updated w/ median.
 Updated w/ median.
 ** =megashot_1060_5_01=
 Updated w/ median.
+
+It's too hard to find the first arrivals in 1065 and after.
+Some of these picks might be ok but could be obscured by the reflection [?].
+
 ** =megashot_1065_5_01=
 Made w/ median.
 ** =megashot_1070_5_01=
@@ -60,6 +64,9 @@ Made w/ median.
 ** =megashot_1100_10_01=
 ** =megashot_1110_10_01=
 ** =megashot_1115_5_01=
+
+Mantle refraction [?] picks:
+
 ** =megashot_1287_5_01=
 Chose to do this shot bc it looked good in quick megashot plots.
 Maybe don't need 0.2 s uncertainty.

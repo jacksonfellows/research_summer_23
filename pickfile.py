@@ -21,3 +21,12 @@ def load_picks(filename):
         sep=" ",
         header=None,
     )
+
+
+def load_pick_list(filename):
+    """Load picks from a list of pick files in filename."""
+    pick_dfs = []
+    with open(filename, "r") as f:
+        for pickfile in f.readlines():
+            pick_dfs.append(load_picks(f"picks/{pickfile.strip()}"))
+    return pd.concat(pick_dfs)
