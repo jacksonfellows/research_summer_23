@@ -295,7 +295,7 @@ def make_aacse_grav_map():
 
 def make_model_map():
     fig = pygmt.Figure()
-    region = (-155, -150.75, 54.5, 58.5)
+    region = (-155, -150.75, 55.5, 58.5)
 
     # set area
     fig.basemap(projection="M12c", region=region, frame="a1f")
@@ -343,17 +343,19 @@ def make_model_map():
         text=utils._broadband_df.code,
     )
 
-    # profile lines
-    for profile, color in (
-        (profile_info.profile_1, "saddlebrown"),
-        (profile_info.profile_2, "limegreen"),
-    ):
-        fig.plot(
-            x=(profile.start_lat_lon[1], profile.end_lat_lon[1]),
-            y=(profile.start_lat_lon[0], profile.end_lat_lon[0]),
-            pen=f"0.06c,{color},4_4:4p",
-            label=profile.name,
-        )
+    # profile line
+    fig.plot(
+        x=(
+            profile_info.profile_1.start_lat_lon[1],
+            profile_info.profile_1.end_lat_lon[1],
+        ),
+        y=(
+            profile_info.profile_1.start_lat_lon[0],
+            profile_info.profile_1.end_lat_lon[0],
+        ),
+        pen="0.06c,gold,4_4:4p",
+        label="Kodiak Profile",
+    )
 
     # legend
     with pygmt.config(FONT="10"):
