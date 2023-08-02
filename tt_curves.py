@@ -19,16 +19,22 @@ def merge_pick_calc(pick_df, calc_df):
     return tts
 
 
-def plot_tt_curve_megashot(shotno, shots_per_side, rayfile, red_vel=6.0, ylim=(-2, 8)):
+def plot_tt_curve_megashot(
+    shotno, shots_per_side, rayfile, red_vel=6.0, ylim=(-2, 8), show=True, ax=None
+):
     shot_pick = load_picks(f"picks/megashot_{shotno}_{shots_per_side}_01")
     shot_calc = Rayfile.load(rayfile).calculated_tts()
     shot_calc = shot_calc[shot_calc.shot == shotno]
     tts = merge_pick_calc(shot_pick, shot_calc)
-    plt.xlim(tts.offset.max() + 2, tts.offset.min() - 2)
-    plt.ylim(ylim)
-    plt.xlabel("Offset (km)")
-    plt.ylabel(f"Reduced time w/ v={red_vel:0.1f} km/s (s)")
-    plt.errorbar(
+
+    if ax is None:
+        ax = plt.subplot()
+
+    ax.set_xlim(tts.offset.max() + 2, tts.offset.min() - 2)
+    ax.set_ylim(ylim)
+    ax.set_xlabel("Offset (km)")
+    ax.set_ylabel(f"Reduced time w/ v={red_vel:0.1f} km/s (s)")
+    ax.errorbar(
         tts.offset,
         tts.tt - tts.offset / red_vel,
         yerr=tts.error,
@@ -39,5 +45,6 @@ def plot_tt_curve_megashot(shotno, shots_per_side, rayfile, red_vel=6.0, ylim=(-
         linestyle="none",
         marker="x",
     )
-    plt.plot(tts.offset, tts.tt_calc - tts.offset / red_vel, "bx")
-    plt.show()
+    ax.plot(tts.offset, tts.tt_calc - tts.offset / red_vel, "bx")
+    if show:
+        plt.show()

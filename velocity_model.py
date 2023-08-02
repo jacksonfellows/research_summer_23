@@ -2,11 +2,9 @@ import functools
 import struct
 
 import numpy as np
-import pandas as pd
 import pygmt
 import scipy
 from matplotlib import pyplot as plt
-from obspy.clients.fdsn.client import Client
 
 import profile_info
 import utils
@@ -82,6 +80,7 @@ class VMTOMO_VM:
         plt.ylabel("Depth (km)")
         # Add scale bar
         plt.colorbar(im, location="bottom", shrink=0.7, label="Velocity (km/s)")
+        plt.tight_layout()
         if show:
             plt.show()
 
@@ -162,7 +161,22 @@ def make_slab_boundary(region, start_lat_lon, end_lat_lon, length_km, n_x_sample
     return z
 
 
-def build_vm(start_lat_lon, end_lat_lon, x1, x2, z1, z2):
+def build_vm(
+    start_lat_lon,
+    end_lat_lon,
+    x1,
+    x2,
+    z1,
+    z2,
+    node_x1,
+    node_x2,
+    start_sed_v=3,
+    final_sed_v=5,
+    sed_thickness=1.5,
+    start_crust_v=5,
+    final_crust_v=7.1,  # Add 0.1 so we see the contour.
+    crust_thickness=15,
+):
     # Model location.
     region = (
         start_lat_lon[1],
@@ -194,6 +208,9 @@ def build_vm(start_lat_lon, end_lat_lon, x1, x2, z1, z2):
 
     # Boundary 2: Elevation/bathymetry
     elev_z = make_elev_boundary(region, start_lat_lon, end_lat_lon, x2 - x1, nx)
+    node_bounds = (node_x1 < x) & (x < node_x2)
+    # Set elevation to 0 where nodes are to avoid weird stuff.
+    elev_z[node_bounds] = 0
     zrf[1] = elev_z
 
     # Boundary 1: Sea level
@@ -221,12 +238,6 @@ def build_vm(start_lat_lon, end_lat_lon, x1, x2, z1, z2):
     vel[1] = 1.5
 
     # Layer 3: Crust
-    start_sed_v = 2
-    final_sed_v = 5
-    sed_thickness = 2
-    start_crust_v = 5
-    final_crust_v = 7.1  # Add 0.1 so we see the contour.
-    crust_thickness = 8
     smooth_width = 20 * nx // (x2 - x1)
     elev_z_smoothed = scipy.signal.savgol_filter(elev_z, smooth_width, 2)
     depth_smoothed = zz - elev_z_smoothed
@@ -260,4 +271,8 @@ def build_vm(start_lat_lon, end_lat_lon, x1, x2, z1, z2):
 
 def build_vm_1():
     p1 = profile_info.profile_1
-    return build_vm(p1.start_lat_lon, p1.end_lat_lon, p1.x1, p1.x2, p1.z1, p1.z2)
+    node_x1 = 10
+    node_x2 = 64
+    return build_vm(
+        p1.start_lat_lon, p1.end_lat_lon, p1.x1, p1.x2, p1.z1, p1.z2, node_x1, node_x2
+    )
