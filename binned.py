@@ -29,13 +29,7 @@ class BinnedTraces:
         self.counts[j] += 1
         self.binned[j] += trace
 
-    def plot(
-        self,
-        red_vel=6.0,
-        scale=1.0,
-        show=True,
-        ylim=(-2, 8),
-    ):
+    def plot(self, red_vel=6.0, scale=1.0, show=True, ylim=(-2, 8)):
         """Plot the binned traces with counts."""
         fig, axs = plt.subplots(2, 1, sharex=True, height_ratios=[0.8, 0.2])
         axs[0].set_xlim(self.offsets.max() + 2, self.offsets.min() - 2)
@@ -65,11 +59,21 @@ class BinnedTraces:
         else:
             return fig, axs
 
-    def plot_mat(self, red_vel=6.0, ylim=(-2, 8), vmin=None, vmax=None, show=True):
-        fig, axs = plt.subplots(2, 1, sharex=True, height_ratios=[0.8, 0.2])
+    def plot_mat(
+        self,
+        red_vel=6.0,
+        ylim=(-2, 8),
+        vmin=None,
+        vmax=None,
+        show=True,
+        fig=None,
+        axs=None,
+    ):
+        if fig is None or axs is None:
+            fig, axs = plt.subplots(2, 1, sharex=True, height_ratios=[0.8, 0.2])
         axs[0].set_xlim(self.offsets.max() + 2, self.offsets.min() - 2)
         axs[0].set_ylim(*ylim)
-        axs[0].set_ylabel(f"Reduced time w/ v={red_vel:0.1f} km/s (s)")
+        axs[0].set_ylabel(f"Time (s) (t - x/{red_vel:0.1f})")
         axs[1].set_xlabel("Offset (km)")
         axs[1].set_ylabel("# of traces")
         xx = np.tile(self.offsets, (self.binned.shape[1], 1))
@@ -78,7 +82,7 @@ class BinnedTraces:
         )
         vv = self.binned.T / self.counts
         axs[0].pcolormesh(xx, yy, vv, vmin=vmin, vmax=vmax)
-        axs[1].bar(self.offsets, self.counts)
+        axs[1].bar(self.offsets, self.counts, color="C0")
         plt.tight_layout()
         if show:
             plt.show()

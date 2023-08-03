@@ -72,7 +72,7 @@ def correlate_traces(t1, t2):
     plt.show()
 
 
-def megashot(center_shot, node_code, shots_per_side, show=True):
+def megashot(center_shot, node_code, shots_per_side, min_v, max_v, show=True):
     t0 = process_trace(load_trace(utils.load_shot(center_shot), node_code))
 
     t_stacked = np.zeros(t0.data.shape)
@@ -86,8 +86,6 @@ def megashot(center_shot, node_code, shots_per_side, show=True):
         offset1_m = utils.source_receiver_offset(t0)
         offset2_m = utils.source_receiver_offset(t_)
         diff_m = offset2_m - offset1_m
-        min_v = 1500  # m/s
-        max_v = 8000  # m/s
         least_lag = diff_m / max_v * t0.stats.sampling_rate
         most_lag = diff_m / min_v * t0.stats.sampling_rate
         max_lag = max(most_lag, least_lag)
@@ -121,6 +119,8 @@ def megashot(center_shot, node_code, shots_per_side, show=True):
     axs[1].set_xlabel("Time (s)")
     if show:
         plt.show()
+    else:
+        return fig, axs
 
 
 def megashot_all_nodes(center_shot, shots_per_side, min_v, max_v, stacking="mean"):
