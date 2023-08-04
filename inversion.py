@@ -2,23 +2,32 @@ import datetime
 import os
 import tempfile
 
+import numpy as np
 from matplotlib import pyplot as plt
 
 import pick
+import pickfile
 import profile_info
 import rayfile
 import velocity_model
 import wrappers
+from dws import load_dws_mask
 from inversion_multi import trace_picks_multi
 
 
-def plot_vm_and_rays(vm_path, rayfile_path):
+def plot_vm_and_rays(vm_path, rayfile_path, dws_path=None):
     vm = velocity_model.VMTOMO_VM.load(vm_path)
     rays = rayfile.Rayfile.load(rayfile_path).rays()
     vm.plot(show=False)
     plt.ylim(40, -2)
     for x, z in rays:
         plt.plot(x, z, color="k", linewidth=0.1)
+    if dws_path is not None:
+        x, z, d = load_dws_mask(dws_path)
+        d_i = np.zeros((*d.shape, 4))
+        d_i[d == 0] = np.array([0, 0, 0, 0])
+        d_i[d == 1] = np.array([1, 1, 1, 1])
+        plt.pcolormesh(x, z, d_i, zorder=100)
     plt.show()
 
 
