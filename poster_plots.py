@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 
+from inversion import plot_vm_and_rays
 from megashot import megashot, megashot_all_nodes
 
 # Set default font size.
@@ -37,3 +38,24 @@ def megashot_single_plot(shotno, min_v, max_v):
     plt.tight_layout()
     fig.set_size_inches(8, 6)
     plt.savefig("figures/megashot_single.png", dpi=DPI)
+
+
+def initial_model_plot():
+    plt.figure(figsize=(13, 9))
+    plot_vm_and_rays(
+        "poster_inversion/vm_000",
+        "poster_inversion/rayfile_000",
+        show=False,
+    )
+    plt.savefig("figures/initial_model.png", dpi=DPI, bbox_inches="tight")
+
+
+def inverted_model_plot():
+    plt.figure(figsize=(13, 9))
+    plot_vm_and_rays(
+        "poster_inversion/vm_008",
+        "poster_inversion/rayfile_008",
+        "poster_inversion/dws_vel_008",
+        show=False,
+    )
+    plt.savefig("figures/inverted_model.png", dpi=DPI, bbox_inches="tight")
