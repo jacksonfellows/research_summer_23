@@ -16,8 +16,9 @@ def plot_vm_and_rays(vm_path, rayfile_path):
     vm = velocity_model.VMTOMO_VM.load(vm_path)
     rays = rayfile.Rayfile.load(rayfile_path).rays()
     vm.plot(show=False)
+    plt.ylim(40, -2)
     for x, z in rays:
-        plt.plot(x, z)
+        plt.plot(x, z, color="k", linewidth=0.1)
     plt.show()
 
 
