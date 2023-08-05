@@ -5,6 +5,7 @@ from matplotlib import pyplot as plt
 from inversion import plot_vm_and_rays
 from megashot import megashot, megashot_all_nodes
 from pickfile import load_picks
+from profile_info import profile_1
 from rayfile import Rayfile
 from tt_curves import merge_pick_calc
 
@@ -12,6 +13,8 @@ from tt_curves import merge_pick_calc
 plt.rcParams.update({"font.size": 24})
 
 DPI = 300
+
+tt_shots = [1000, 1050, 1287, 1350]
 
 
 def megashot_comparison_plot(shotno, shots_per_side, min_v, max_v):
@@ -65,6 +68,14 @@ def model_plots():
         cbar_ax=cbar_ax,
         cbar_orientation="vertical",
     )
+
+    tt_shot_locs = profile_1.project_shots(tt_shots)
+
+    for ax in [model_ax, invert_ax]:
+        ax.plot(
+            tt_shot_locs.x, tt_shot_locs.z, "*", zorder=102, color="gold", markersize=10
+        )
+
     model_ax.set_title("Initial Model")
     invert_ax.set_title("Inverted Model")
     model_ax.set_xlabel(None)
@@ -148,7 +159,7 @@ plt.set_cmap("viridis_r")
 
 
 def plot_tt_curves():
-    shots = [1000, 1050, 1287, 1350]
+    shots = tt_shots
     fig, axs = plt.subplots(nrows=2, ncols=2, sharey="row", figsize=(13, 9))
     axs = axs.flatten()
     for i, shotno in enumerate(shots):
