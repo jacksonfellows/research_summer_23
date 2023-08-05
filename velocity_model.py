@@ -26,9 +26,9 @@ class VMTOMO_VM:
         assert vel.shape == (nx * nz * (nr + 1),)
         self.vel = vel
 
-    def plot(self, show=True):
-        if show:
-            plt.figure()
+    def plot(self, show=True, ax=None, cbar_ax=None):
+        if ax is None:
+            fig, ax = plt.subplots(layout="tight")
         x = np.linspace(self.x1, self.x2, self.nx)
         z = np.linspace(self.z1, self.z2, self.nz)
         xx, zz = np.meshgrid(x, z)
@@ -52,7 +52,7 @@ class VMTOMO_VM:
                 .T
             )
             vv_masked = np.ma.masked_array(vv, zz < b)
-            im = plt.imshow(
+            im = ax.imshow(
                 vv_masked,
                 vmin=0,
                 vmax=10,
@@ -60,7 +60,7 @@ class VMTOMO_VM:
                 cmap=velocity_cmap,
                 aspect=vert_exag,
             )
-            CS = plt.contour(
+            CS = ax.contour(
                 xx,
                 zz,
                 vv_masked,
@@ -69,18 +69,26 @@ class VMTOMO_VM:
                 linestyles="dashed",
                 linewidths=0.5,
             )
-            plt.clabel(CS, inline=1, fontsize=8, levels=contour_levels_label)
+            ax.clabel(CS, inline=1, fontsize=8, levels=contour_levels_label)
         # Plot the boundaries.
         for boundary_i in range(self.nr):
             b = self.zrf[boundary_i * self.nx : (boundary_i + 1) * self.nx]
-            plt.plot(x, b, color="k")
+            ax.plot(x, b, color="k")
         # Add title and axis labels
-        plt.title(f"Vertical Exaggeration = {vert_exag:0.1f}x")
-        plt.xlabel("Profile Distance (km)")
-        plt.ylabel("Depth (km)")
+        ax.set_title(f"Vertical Exaggeration = {vert_exag:0.1f}x")
+        ax.set_xlabel("Profile Distance (km)")
+        ax.set_ylabel("Depth (km)")
         # Add scale bar
-        plt.colorbar(im, location="bottom", shrink=0.7, label="Velocity (km/s)")
-        plt.tight_layout()
+        if cbar_ax is None:
+            plt.colorbar(im, location="bottom", shrink=0.7, label="Velocity (km/s)")
+        else:
+            plt.colorbar(
+                im,
+                cbar_ax,
+                shrink=0.7,
+                label="Velocity (km/s)",
+                orientation="horizontal",
+            )
         if show:
             plt.show()
 

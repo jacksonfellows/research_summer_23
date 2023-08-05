@@ -15,20 +15,30 @@ from dws import load_dws_mask
 from inversion_multi import trace_picks_multi
 
 
-def plot_vm_and_rays(vm_path, rayfile_path, dws_path=None):
+def plot_vm_and_rays(
+    vm_path, rayfile_path, dws_path=None, show=True, ax=None, cbar_ax=None
+):
     vm = velocity_model.VMTOMO_VM.load(vm_path)
     rays = rayfile.Rayfile.load(rayfile_path).rays()
-    vm.plot(show=False)
-    plt.ylim(40, -2)
+    if ax is None:
+        ax = plt.subplot()
+    vm.plot(show=False, ax=ax, cbar_ax=cbar_ax)
+    ax.set_ylim(40, -2)
     for x, z in rays:
-        plt.plot(x, z, color="k", linewidth=0.1)
+        ax.plot(x, z, color="k", linewidth=0.1)
     if dws_path is not None:
         x, z, d = load_dws_mask(dws_path)
         d_i = np.zeros((*d.shape, 4))
         d_i[d == 0] = np.array([0, 0, 0, 0])
         d_i[d == 1] = np.array([1, 1, 1, 1])
-        plt.pcolormesh(x, z, d_i, zorder=100)
-    plt.show()
+        ax.pcolormesh(x, z, d_i, zorder=100)
+        # plot boundaries again
+        bx = np.linspace(vm.x1, vm.x2, vm.nx)
+        for boundary_i in range(vm.nr):
+            b = vm.zrf[boundary_i * vm.nx : (boundary_i + 1) * vm.nx]
+            ax.plot(bx, b, color="k", zorder=101)
+    if show:
+        plt.show()
 
 
 def invert(
