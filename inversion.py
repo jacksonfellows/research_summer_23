@@ -16,13 +16,19 @@ from inversion_multi import trace_picks_multi
 
 
 def plot_vm_and_rays(
-    vm_path, rayfile_path, dws_path=None, show=True, ax=None, cbar_ax=None
+    vm_path,
+    rayfile_path,
+    dws_path=None,
+    show=True,
+    ax=None,
+    cbar_ax=None,
+    cbar_orientation="horizontal",
 ):
     vm = velocity_model.VMTOMO_VM.load(vm_path)
     rays = rayfile.Rayfile.load(rayfile_path).rays()
     if ax is None:
         ax = plt.subplot()
-    vm.plot(show=False, ax=ax, cbar_ax=cbar_ax)
+    vm.plot(show=False, ax=ax, cbar_ax=cbar_ax, cbar_orientation=cbar_orientation)
     ax.set_ylim(40, -2)
     for x, z in rays:
         ax.plot(x, z, color="k", linewidth=0.1)

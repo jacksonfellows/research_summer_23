@@ -26,7 +26,7 @@ class VMTOMO_VM:
         assert vel.shape == (nx * nz * (nr + 1),)
         self.vel = vel
 
-    def plot(self, show=True, ax=None, cbar_ax=None):
+    def plot(self, show=True, ax=None, cbar_ax=None, cbar_orientation=None):
         if ax is None:
             fig, ax = plt.subplots(layout="tight")
         x = np.linspace(self.x1, self.x2, self.nx)
@@ -87,7 +87,7 @@ class VMTOMO_VM:
                 cbar_ax,
                 shrink=0.7,
                 label="Velocity (km/s)",
-                orientation="horizontal",
+                orientation=cbar_orientation,
             )
         if show:
             plt.show()

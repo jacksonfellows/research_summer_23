@@ -46,14 +46,15 @@ def megashot_single_plot(shotno, min_v, max_v):
 
 
 def model_plots():
-    fig, (model_ax, invert_ax) = plt.subplots(nrows=2, figsize=(15, 11.5), sharex=True)
-    cbar_ax = fig.add_axes((0.2, -0.05, 0.6, 0.05))
+    fig, (model_ax, invert_ax) = plt.subplots(nrows=2, figsize=(13, 10), sharex=True)
+    cbar_ax = fig.add_axes((0.92, 0.2, 0.05, 0.6))
     plot_vm_and_rays(
         "poster_inversion/vm_000",
         "poster_inversion/rayfile_000",
         show=False,
         ax=model_ax,
         cbar_ax=cbar_ax,
+        cbar_orientation="vertical",
     )
     plot_vm_and_rays(
         "poster_inversion/vm_008",
@@ -62,6 +63,7 @@ def model_plots():
         show=False,
         ax=invert_ax,
         cbar_ax=cbar_ax,
+        cbar_orientation="vertical",
     )
     model_ax.set_title("Initial Model")
     invert_ax.set_title("Inverted Model")
