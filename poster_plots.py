@@ -33,7 +33,7 @@ def megashot_comparison_plot(shotno, shots_per_side, min_v, max_v):
     single_ax.set_title("Before Stacking (1 shot)")
     stacked_ax.set_title(f"After Stacking ({shots_per_side} shots/side)")
     plt.tight_layout()
-    plt.savefig("figures/megashot_comparison.png", dpi=DPI)
+    plt.savefig("figures/megashot_comparison.png", dpi=DPI, bbox_inches="tight")
 
 
 def megashot_single_plot(shotno, min_v, max_v):
@@ -45,7 +45,7 @@ def megashot_single_plot(shotno, min_v, max_v):
     stacked_ax.set_ylim(-0.1, 1.1)
     plt.tight_layout()
     fig.set_size_inches(8, 6)
-    plt.savefig("figures/megashot_single.png", dpi=DPI)
+    plt.savefig("figures/megashot_single.png", dpi=DPI, bbox_inches="tight")
 
 
 def model_plots():
