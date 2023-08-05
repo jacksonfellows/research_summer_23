@@ -74,15 +74,17 @@ class BinnedTraces:
         axs[0].set_xlim(self.offsets.max() + 2, self.offsets.min() - 2)
         axs[0].set_ylim(*ylim)
         axs[0].set_ylabel(f"Time (s) (t - x/{red_vel:0.1f})")
-        axs[1].set_xlabel("Offset (km)")
-        axs[1].set_ylabel("# of traces")
+        if axs[1] is not None:
+            axs[1].set_xlabel("Offset (km)")
+            axs[1].set_ylabel("# of traces")
         xx = np.tile(self.offsets, (self.binned.shape[1], 1))
         yy = np.subtract.outer(
             np.arange(self.binned.shape[1]) / self.sampling_rate, self.offsets / red_vel
         )
         vv = self.binned.T / self.counts
         axs[0].pcolormesh(xx, yy, vv, vmin=vmin, vmax=vmax)
-        axs[1].bar(self.offsets, self.counts, color="C0")
+        if axs[1] is not None:
+            axs[1].bar(self.offsets, self.counts, color="C0")
         plt.tight_layout()
         if show:
             plt.show()
