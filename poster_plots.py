@@ -169,8 +169,11 @@ def plot_tt_curves():
         )
         axs[i].set_title(f"Shot {shotno}")
 
+    axs[0].set_xlabel(None)
+    axs[1].set_xlabel(None)
+
     axs[1].set_ylabel(None)
     axs[3].set_ylabel(None)
 
     plt.tight_layout()
-    plt.savefig("figures/tt_curves.png", dpi=DPI)
+    plt.savefig("figures/tt_curves.png", dpi=DPI, bbox_inches="tight")
