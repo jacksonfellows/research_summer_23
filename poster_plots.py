@@ -166,12 +166,12 @@ plt.set_cmap("viridis_r")
 
 def plot_tt_curves():
     shots = tt_shots
-    fig, axs = plt.subplots(nrows=2, ncols=2, sharey="row", figsize=(13, 9))
+    fig, axs = plt.subplots(nrows=2, ncols=2, sharey="row", figsize=(13, 7))
     axs = axs.flatten()
     for i, shotno in enumerate(shots):
         min_v = 5000 if shotno < 1200 else 7000
         max_v = 7000 if shotno < 1200 else 9000
-        ylim = (-2, 6)  # (0, 4) if shotno < 1200 else (-2, 2)
+        ylim = (-1, 5) if shotno < 1200 else (-2, 4)
         plot_tt_curve(
             shotno,
             5,
@@ -191,6 +191,18 @@ def plot_tt_curves():
 
     axs[1].set_ylabel(None)
     axs[3].set_ylabel(None)
+
+    axs[0].set_yticks([-1, 1, 3, 5])
+    axs[2].set_yticks([-2, 0, 2, 4])
+
+    plt.legend(
+        loc="upper left",
+        fontsize=20,
+        columnspacing=0.2,
+        handletextpad=0.2,
+        borderpad=0.2,
+        labelspacing=0.2,
+    )
 
     plt.tight_layout()
     plt.savefig("figures/tt_curves.png", dpi=DPI, bbox_inches="tight")
