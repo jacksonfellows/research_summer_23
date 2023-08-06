@@ -18,17 +18,23 @@ tt_shots = [1000, 1050, 1287, 1350]
 
 
 def megashot_comparison_plot(shotno, shots_per_side, min_v, max_v):
-    single_bt = megashot_all_nodes(shotno, 0, min_v, max_v, "median")
-    stacked_bt = megashot_all_nodes(shotno, shots_per_side, min_v, max_v, "median")
+    single_bt = get_megashot_bt(shotno, 0, min_v, max_v)
+    stacked_bt = get_megashot_bt(shotno, shots_per_side, min_v, max_v)
     red_vel = 6.0
     fig, (single_ax, stacked_ax, counts_ax) = plt.subplots(
-        nrows=3, sharex=True, height_ratios=(0.4, 0.4, 0.2), figsize=(8.5, 12)
+        nrows=3, sharex=True, height_ratios=(0.4, 0.4, 0.2), figsize=(8.5, 10)
     )
+    ylim = (0, 6)
     single_bt.plot_mat(
-        red_vel=red_vel, vmin=0, show=False, fig=fig, axs=[single_ax, counts_ax]
+        red_vel=red_vel,
+        vmin=0,
+        show=False,
+        fig=fig,
+        axs=[single_ax, counts_ax],
+        ylim=ylim,
     )
-    _, axs = stacked_bt.plot_mat(
-        red_vel=red_vel, fig=fig, axs=[stacked_ax, counts_ax], show=False
+    stacked_bt.plot_mat(
+        red_vel=red_vel, fig=fig, axs=[stacked_ax, counts_ax], show=False, ylim=ylim
     )
     single_ax.set_title("Before Stacking (1 shot)")
     stacked_ax.set_title(f"After Stacking ({shots_per_side} shots/side)")
