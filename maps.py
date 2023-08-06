@@ -30,7 +30,7 @@ aleut_lines = pd.read_csv("./map_data/aleut_lines.csv")
 edge_lines = geopandas.read_file("./map_data/traced_edge_transect.gpkg")
 avo_stations = pd.read_csv("./map_data/avo_lat_lon_elev.csv")
 
-model_region = (-155, -150.75, 55.5, 58.5)
+model_region = (-155, -150.75, 54.5, 58.5)
 aacse_map_region = (-165, -147, 51, 60)
 
 
