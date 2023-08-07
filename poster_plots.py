@@ -215,18 +215,36 @@ def get_line_binned(lineno):
     return bin_all_shots_envelope_sta_lta(utils.shots_for_line(lineno))
 
 
-def plot_binned_1():
+def plot_binned_1_2():
     l1 = get_line_binned(1)
-    fig, axs = plt.subplots(2, 1, sharex=True, height_ratios=[0.9, 0.1], figsize=(9, 6))
-    l1.plot_mat(fig=fig, axs=axs, vmin=0.07, vmax=0.2, ylim=(-4, 6), show=False)
-    axs[0].set_title("Line 1")
-    plt.savefig("figures/l1_binned.png", dpi=DPI, bbox_inches="tight")
-
-
-def plot_binned_2():
     l2 = get_line_binned(2)
-    fig, axs = plt.subplots(2, 1, sharex=True, height_ratios=[0.9, 0.1], figsize=(9, 6))
-    l2.plot_mat(fig=fig, axs=axs, vmin=0.07, vmax=0.25, ylim=(-8, 4), show=False)
-    axs[0].set_yticks([-8, -6, -4, -2, 0, 2, 4])
-    axs[0].set_title("Line 2")
-    plt.savefig("figures/l2_binned.png", dpi=DPI, bbox_inches="tight")
+
+    fig, axs = plt.subplots(
+        2, 2, sharex="col", height_ratios=[0.9, 0.1], figsize=(17, 6)
+    )
+
+    l1.plot_mat(
+        fig=fig,
+        axs=[axs[0, 0], axs[1, 0]],
+        vmin=0.07,
+        vmax=0.2,
+        ylim=(-4, 6),
+        show=False,
+    )
+
+    l2.plot_mat(
+        fig=fig,
+        axs=[axs[0, 1], axs[1, 1]],
+        vmin=0.07,
+        vmax=0.25,
+        ylim=(-8, 4),
+        show=False,
+    )
+
+    axs[0, 0].set_yticks([-4, -2, 0, 2, 4, 6])
+    axs[0, 1].set_yticks([-8, -6, -4, -2, 0, 2, 4])
+
+    axs[0, 0].set_title("Line 1")
+    axs[0, 1].set_title("Line 2")
+
+    plt.savefig("figures/l1_l2_binned.png", dpi=DPI, bbox_inches="tight")
