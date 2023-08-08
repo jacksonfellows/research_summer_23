@@ -1,4 +1,6 @@
-# Python environment  #
+# Investigating Shallow Forearc Structure Within the Southern 1964 MW 9.2 Great Alaska Earthquake Asperity With a Dense Nodal Seismic Array and Marine Airgun Shots #
+
+## Python environment ##
 
 To build the lock file:
 ```
@@ -9,13 +11,13 @@ To create a Conda environment from the lock file:
 conda-lock install --name YOUR_ENVIRONMENT_NAME_HERE conda-lock.yml
 ```
 
-# Stuff to download #
+## Stuff to download ##
 
 Can download USGS quaternary faults here: <https://earthquake.usgs.gov/static/lfs/nshm/qfaults/Qfaults_GIS.zip>.
 Can find volcanoes for a search range here: <https://www.ngdc.noaa.gov/hazel/view/hazards/volcano/loc-search>.
 Can download tectonic plate geometries here: <https://github.com/fraxen/tectonicplates/archive/master.zip>.
 
-# Testing #
+## Testing ##
 
 To run all tests run:
 ```
@@ -27,7 +29,7 @@ For less output run:
 pytest -q --disable-warnings
 ```
 
-# Notes #
+## Notes ##
 
 1964 rupture traced from Suleimani, E., Nicolsky, D. J., Haeussler, P. J., & Hansen, R. (2011). Combined Effects of Tectonic and Landslide-Generated Tsunami Runup at Seward, Alaska During the M W 9.2 1964 Earthquake. Pure and Applied Geophysics, 168(6–7), 1053–1074. https://doi.org/10.1007/s00024-010-0228-4
 
