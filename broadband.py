@@ -8,6 +8,14 @@ import utils
 def make_unbinned_traces(station_code, lineno, freqmin=3, freqmax=15):
     st = utils.load_broadband(station_code, lineno)
     st.filter("bandpass", freqmin=freqmin, freqmax=freqmax)
+
+    # Could STA/LTA or AGC here.
+
+    # utils.sta_lta_inplace(st, 0.05, 5.0)
+
+    # for tr in st:
+    #     utils.agc(tr, 1.0 * tr.stats.sampling_rate)
+
     offsets = [
         1e-3
         * obspy.geodetics.gps2dist_azimuth(
