@@ -15,12 +15,13 @@ class UnbinnedTraces:
         self.offsets.append(offset)
         self.traces.append(trace)
 
-    def plot(self, red_vel=6.0, scale=1.0, show=True, ylim=(-2, 8)):
-        fig, ax = plt.subplots()
+    def plot(self, red_vel=6.0, scale=1.0, show=True, ylim=(-2, 8), fig=None, ax=None):
+        if fig is None or ax is None:
+            fig, ax = plt.subplots()
         ax.set_xlim(max(self.offsets) + 2, min(self.offsets) - 2)
         ax.set_ylim(ylim)
         ax.set_xlabel("Offset (km)")
-        ax.set_ylabel(f"Reduced time w/ v={red_vel:0.1f} km/s (s)")
+        ax.set_ylabel(f"Time (s) (t - x/{red_vel:0.1f})")
         for offset, trace in zip(self.offsets, self.traces):
             x = scale * trace + offset
             y = np.arange(x.shape[0]) / self.sampling_rate - offset / red_vel

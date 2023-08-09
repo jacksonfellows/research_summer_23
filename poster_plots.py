@@ -1,5 +1,6 @@
 from functools import cache
 
+import numpy as np
 from matplotlib import pyplot as plt
 
 import utils
@@ -10,6 +11,7 @@ from pickfile import load_picks
 from profile_info import profile_1
 from rayfile import Rayfile
 from tt_curves import merge_pick_calc
+from unbinned import UnbinnedTraces
 
 # Set default font size.
 plt.rcParams.update({"font.size": 24})
@@ -256,3 +258,35 @@ def plot_binned_1_2():
     axs[0, 1].set_title("Line 2")
 
     plt.savefig("figures/l1_l2_binned.png", dpi=DPI, bbox_inches="tight")
+
+
+def plot_raw():
+    shotno = 1000
+    st = utils.load_shot(shotno)
+    utils.bandpass_stream_inplace(st)
+    offsets = [1e-3 * utils.source_receiver_offset(tr) for tr in st]
+    traces = UnbinnedTraces(min(offsets), max(offsets), st[0].stats.sampling_rate)
+    for offset, tr in zip(offsets, st):
+        tr.data = tr.data / np.max(np.abs(tr.data))
+        traces.add_trace(tr.data, offset)
+    fig, ax = plt.subplots(figsize=(5, 3))
+    ax.set_yticks([-1, 1, 3, 5])
+    traces.plot(show=False, scale=0.5, ylim=(-1, 5), fig=fig, ax=ax)
+    plt.title(f"Shot {shotno}")
+    plt.savefig(f"figures/raw_shot_{shotno}", dpi=DPI, bbox_inches="tight")
+    plt.close()
+
+    shotno = 1350
+    st = utils.load_shot(shotno)
+    utils.bandpass_stream_inplace(st)
+    offsets = [1e-3 * utils.source_receiver_offset(tr) for tr in st]
+    traces = UnbinnedTraces(min(offsets), max(offsets), st[0].stats.sampling_rate)
+    for offset, tr in zip(offsets, st):
+        tr.data = tr.data / np.max(np.abs(tr.data))
+        traces.add_trace(tr.data, offset)
+    fig, ax = plt.subplots(figsize=(5, 3))
+    ax.set_yticks([-2, 0, 2, 4])
+    traces.plot(show=False, scale=0.5, ylim=(-2, 4), fig=fig, ax=ax)
+    plt.title(f"Shot {shotno}")
+    plt.savefig(f"figures/raw_shot_{shotno}", dpi=DPI, bbox_inches="tight")
+    plt.close()
