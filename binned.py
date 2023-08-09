@@ -73,10 +73,10 @@ class BinnedTraces:
             fig, axs = plt.subplots(2, 1, sharex=True, height_ratios=[0.8, 0.2])
         axs[0].set_xlim(self.offsets.max() + 2, self.offsets.min() - 2)
         axs[0].set_ylim(*ylim)
-        axs[0].set_ylabel(f"Time (s) (t - x/{red_vel:0.1f})")
+        axs[0].set_ylabel(f"Time (s) (t - x/{red_vel:g})")
         if axs[1] is not None:
             axs[1].set_xlabel("Offset (km)")
-            axs[1].set_ylabel("# of traces")
+            axs[1].set_ylabel("#")
         xx = np.tile(self.offsets, (self.binned.shape[1], 1))
         yy = np.subtract.outer(
             np.arange(self.binned.shape[1]) / self.sampling_rate, self.offsets / red_vel

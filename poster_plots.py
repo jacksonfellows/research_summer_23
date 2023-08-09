@@ -24,7 +24,7 @@ def megashot_comparison_plot(shotno, shots_per_side, min_v, max_v):
     stacked_bt = get_megashot_bt(shotno, shots_per_side, min_v, max_v)
     red_vel = 6.0
     fig, (single_ax, stacked_ax, counts_ax) = plt.subplots(
-        nrows=3, sharex=True, height_ratios=(0.4, 0.4, 0.2), figsize=(8.5, 10)
+        nrows=3, sharex=True, height_ratios=(0.5, 0.5, 0.1), figsize=(8.5, 8)
     )
     ylim = (0, 6)
     single_bt.plot_mat(
@@ -52,7 +52,15 @@ def megashot_single_plot(shotno, min_v, max_v):
     shots_ax.set_ylim(-0.1, 1.1)
     stacked_ax.set_ylim(-0.1, 1.1)
     plt.tight_layout()
-    fig.set_size_inches(8, 6)
+    fig.set_size_inches(8, 3.5)
+    shots_ax.legend(
+        loc="lower right",
+        fontsize=20,
+        columnspacing=0.2,
+        handletextpad=0.2,
+        borderpad=0.2,
+        labelspacing=0.2,
+    )
     plt.savefig("figures/megashot_single.png", dpi=DPI, bbox_inches="tight")
 
 
@@ -220,7 +228,7 @@ def plot_binned_1_2():
     l2 = get_line_binned(2)
 
     fig, axs = plt.subplots(
-        2, 2, sharex="col", height_ratios=[0.9, 0.1], figsize=(17, 6)
+        2, 2, sharex="col", height_ratios=[0.9, 0.1], figsize=(17, 4)
     )
 
     l1.plot_mat(
