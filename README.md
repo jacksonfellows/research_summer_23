@@ -1,5 +1,9 @@
 # Investigating Shallow Forearc Structure Within the Southern 1964 MW 9.2 Great Alaska Earthquake Asperity With a Dense Nodal Seismic Array and Marine Airgun Shots #
 
+This repository contains code, data, and figures for my [URISE](https://www.iris.edu/hq/internship/) summer internship project.
+My mentor was Professor Lindsay Worthington at University of New Mexico.
+I am planning on presenting my results at the Fall 2023 AGU session in San Francisco.
+
 ## Python environment ##
 
 To build the lock file:
@@ -22,11 +26,6 @@ Can download tectonic plate geometries here: <https://github.com/fraxen/tectonic
 To run all tests run:
 ```
 pytest
-```
-
-For less output run:
-```
-pytest -q --disable-warnings
 ```
 
 ## Notes ##
