@@ -4,6 +4,21 @@ This repository contains code, data, and figures for my [URISE](https://www.iris
 My mentor was Professor Lindsay Worthington at University of New Mexico.
 I am planning on presenting my results at the Fall 2023 AGU session in San Francisco.
 
+## Abstract ##
+
+We investigate structure of the shallow subduction forearc along a 250 km transect perpendicular to the Aleutian trench offshore of Kodiak Island in southern Alaska. The survey location lies within the southern asperity of the 1964 MW 9.2 Great Alaska Earthquake. The 1964 rupture zone contains along-margin variations in earthquake history, plate structure, sediment input, and plate coupling and is a good location to examine the relationship between structure and seismicity. Specifically, this study aims to characterize the upper plate velocity structure in the accretionary prism and how it compares to structure along-margin. The material properties of the forearc are relevant for understanding earthquake rupture propagation and potential tsunami behavior.
+
+This analysis uses data collected in 2019 as part of the Alaska Amphibious Community Seismic Experiment. The receivers were a dense array of 398 nodal 5 Hz geophones distributed with ~200–300 m spacing along the road network in northeastern Kodiak Island. The source was a 6600 in3 marine airgun array towed by the R/V Marcus Langseth and shot at ~400 m spacing along the study transect offshore.
+
+To obtain first arrivals we applied bandpass and STA/LTA filters. To further improve the signal-to-noise ratio we binned traces by source-receiver offset and stacked adjacent shots within 5 km bins by time-shifting within a velocity range to maximize cross-correlation.
+
+At source-receiver offsets <100 km we observe a first arrival with an apparent velocity of ~6 km/s. Between ~100–180 km, first arrival energy is suppressed and sporadic, likely due to a low velocity zone at depth or a highly attenuating region in the upper plate. At offsets >180 km we observe a first arrival with an apparent velocity of ~8 km/s. At <100 km offsets we also observe a strong reflective phase. The travel times from these seismic phases can be used in ray tracing and inversion to determine velocity structure in the shallow subduction forearc.
+
+## Results ##
+
+<img src="figures/tt_curves.png" width="800">
+<img src="figures/model.png" width="800">
+
 ## Python environment ##
 
 To build the lock file:
